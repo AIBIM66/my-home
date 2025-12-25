@@ -6,11 +6,11 @@
     <title>我的主页</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* --- iOS 设计语言系统 (中文优化版) --- */
+        /* --- iOS 设计语言系统 --- */
         :root {
             --ios-blue: #007AFF;
             --ios-green: #34C759;
-            --ios-bg-glass: rgba(30, 30, 30, 0.65); /* 加深底色以提升文字对比度 */
+            --ios-bg-glass: rgba(30, 30, 30, 0.60);
             --ios-border: rgba(255, 255, 255, 0.12);
             --ios-text-primary: rgba(255, 255, 255, 0.95);
             --ios-text-secondary: rgba(255, 255, 255, 0.6);
@@ -19,8 +19,7 @@
 
         body { 
             margin: 0; 
-            /* 中文 iOS 字体栈优先 */
-            font-family: -apple-system, "PingFang SC", "Microsoft YaHei", "Helvetica Neue", sans-serif; 
+            font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif; 
             overflow: hidden; 
             background: #000; 
             color: var(--ios-text-primary); 
@@ -39,61 +38,54 @@
             box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
         }
 
+        /* 搜索框专用样式 */
+        .ios-search-bar {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 50px;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+        .ios-search-bar:focus-within {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: var(--ios-blue);
+            box-shadow: 0 0 0 4px rgba(0, 122, 255, 0.15);
+            transform: scale(1.02);
+        }
+        .search-input {
+            background: transparent; border: none; outline: none; color: white; width: 100%; font-size: 16px; height: 100%;
+        }
+        .search-input::placeholder { color: rgba(255, 255, 255, 0.5); }
+
+        /* 胶囊玻璃 (天气) */
+        .ios-glass-pill {
+            background: rgba(40, 40, 40, 0.4);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 50px;
+        }
+
         /* 标题样式 */
         .ios-header {
-            font-size: 12px;
-            font-weight: 600;
-            opacity: 0.7;
-            margin-bottom: 12px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
+            font-size: 12px; font-weight: 600; opacity: 0.7; margin-bottom: 12px;
+            display: flex; align-items: center; gap: 6px;
         }
 
-        /* 输入框 */
-        .ios-input {
-            background: var(--ios-input-bg);
-            border: none;
-            padding: 12px 16px;
-            border-radius: 12px;
-            width: 100%;
-            color: white;
-            outline: none;
-            font-size: 14px;
-            transition: background 0.2s;
-        }
-        .ios-input:focus { background: rgba(118, 118, 128, 0.4); }
-        .ios-input::placeholder { color: var(--ios-text-secondary); }
-
-        /* 按钮 */
-        .ios-btn {
-            background: var(--ios-blue);
-            color: white;
-            font-weight: 500;
-            font-size: 14px;
-            padding: 10px 16px;
-            border-radius: 12px;
-            transition: all 0.2s;
-        }
-        .ios-btn:active { transform: scale(0.96); }
+        /* 基础组件 */
+        .ios-input { background: var(--ios-input-bg); border: none; padding: 12px 16px; border-radius: 12px; width: 100%; color: white; outline: none; font-size: 14px; }
+        .ios-btn { background: var(--ios-blue); color: white; font-weight: 500; font-size: 14px; padding: 10px 16px; border-radius: 12px; cursor: pointer; }
         .ios-btn-secondary { background: rgba(255,255,255,0.1); color: white; backdrop-filter: blur(10px); }
 
         /* 快捷图标 */
         .shortcut-item {
-            background: rgba(255,255,255,0.08);
-            border: 1px solid rgba(255,255,255,0.05);
-            border-radius: 18px;
-            padding: 10px 20px;
-            font-size: 14px;
-            font-weight: 500;
-            transition: all 0.3s;
-            display: flex; align-items: center; gap: 10px;
-            color: rgba(255,255,255,0.9);
+            background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.05); border-radius: 18px;
+            padding: 10px 20px; font-size: 14px; font-weight: 500; transition: all 0.3s;
+            display: flex; align-items: center; gap: 10px; color: rgba(255,255,255,0.9);
         }
-        .shortcut-item:hover { background: rgba(255,255,255,0.15); transform: translateY(-2px); border-color: rgba(255,255,255,0.2); }
+        .shortcut-item:hover { background: rgba(255,255,255,0.15); transform: translateY(-2px); }
         .shortcut-icon { width: 20px; height: 20px; background: var(--ios-blue); border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 10px; }
 
-        /* 开关组件 (Switch) */
+        /* Switch */
         .ios-switch { position: relative; display: inline-block; width: 44px; height: 24px; }
         .ios-switch input { opacity: 0; width: 0; height: 0; }
         .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(120,120,128,0.32); transition: .4s; border-radius: 24px; }
@@ -101,51 +93,59 @@
         input:checked + .slider { background-color: var(--ios-green); }
         input:checked + .slider:before { transform: translateX(20px); }
 
-        /* 滚动条隐藏 */
         .scroll-hide::-webkit-scrollbar { display: none; }
-        /* 股市图表滤镜 */
         .tv-widget { filter: invert(1) hue-rotate(180deg) contrast(0.85) brightness(1.1); mix-blend-mode: screen; opacity: 0.9; }
+        .clock-font { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-variant-numeric: tabular-nums; }
     </style>
 </head>
 <body>
 
     <div id="mainBg" class="bg-layer" style="background-image: url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2564');"></div>
 
-    <div class="relative h-screen w-full flex flex-col p-6 md:p-10 overflow-y-auto scroll-hide">
+    <div class="relative h-screen w-full flex flex-col p-6 md:p-10 overflow-y-auto scroll-hide items-center">
         
-        <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-6">
-            <div class="ios-glass px-6 py-4 flex items-center gap-6 cursor-default hover:bg-white/10 transition">
-                <div class="flex flex-col">
-                    <span id="cityText" class="font-bold text-sm text-[var(--ios-blue)] tracking-wide">定位中...</span>
-                    <span id="weatherDesc" class="text-xs text-[var(--ios-text-secondary)] mt-1">--</span>
-                </div>
-                <div class="flex items-start">
-                    <span id="tempText" class="text-5xl font-light">--</span>
-                    <span class="text-xl font-light mt-1 text-[var(--ios-text-secondary)]">°C</span>
-                </div>
-            </div>
+        <div class="flex flex-col items-center justify-center mt-6 mb-8 w-full max-w-2xl text-center z-10">
             
-            <div class="text-left md:text-right">
-                <h1 id="clock" class="text-7xl font-semibold tracking-tighter leading-none font-[Helvetica Neue]">00:00</h1>
-                <p id="date" class="text-base text-[var(--ios-text-secondary)] mt-2 font-medium">载入日期...</p>
+            <p id="date" class="text-lg font-medium tracking-wide text-[var(--ios-text-secondary)] mb-1 uppercase">载入日期...</p>
+            <h1 id="clock" class="text-8xl md:text-9xl font-bold tracking-tighter leading-none clock-font drop-shadow-2xl mb-6">00:00</h1>
+            
+            <div class="ios-glass-pill px-6 py-2 flex items-center gap-4 cursor-default hover:bg-white/10 transition mb-8">
+                <div class="flex items-center gap-2">
+                    <span id="weatherDesc" class="text-sm font-medium">--</span>
+                    <span class="w-[1px] h-3 bg-white/20"></span>
+                    <span id="tempText" class="text-sm font-bold">--</span>
+                    <span class="text-xs opacity-60">°C</span>
+                </div>
+                <div class="flex items-center gap-1 opacity-50">
+                    <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"></path></svg>
+                    <span id="cityText" class="text-xs uppercase tracking-wider">定位中</span>
+                </div>
             </div>
+
+            <div class="w-full max-w-lg relative group">
+                <div class="ios-search-bar flex items-center px-4 py-3">
+                    <svg class="w-5 h-5 text-white/50 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                    <input type="text" id="searchInput" class="search-input" placeholder="搜索..." autocomplete="off">
+                </div>
+            </div>
+
         </div>
 
-        <div id="shortcutsDisplay" class="flex flex-wrap justify-start md:justify-center gap-4 mb-8"></div>
+        <div id="shortcutsDisplay" class="flex flex-wrap justify-center gap-3 mb-10 w-full max-w-4xl"></div>
 
-        <div id="widgetGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-[1800px] mx-auto w-full flex-1 mb-6">
+        <div id="widgetGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-[1600px] w-full flex-1 mb-6">
             
-            <div id="widget-stock" class="lg:col-span-2 ios-glass p-1 flex flex-col h-[420px] overflow-hidden relative">
+            <div id="widget-stock" class="lg:col-span-2 ios-glass p-1 flex flex-col h-[380px] overflow-hidden relative">
                 <div class="tradingview-widget-container w-full h-full tv-widget">
                     <div class="tradingview-widget-container__widget"></div>
                     <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-market-overview.js" async>
                     { "colorTheme": "light", "dateRange": "12M", "showChart": true, "locale": "zh_CN", "width": "100%", "height": "100%", "isTransparent": true,
-                      "tabs": [ { "title": "全球指数", "symbols": [ { "s": "NASDAQ:NDX", "d": "纳斯达克100" }, { "s": "S&P:SPX", "d": "标普500" }, { "s": "TVC:NI225", "d": "日经225" }, { "s": "TVC:UKX", "d": "富时100" } ] } ] }
+                      "tabs": [ { "title": "全球指数", "symbols": [ { "s": "NASDAQ:NDX", "d": "纳斯达克" }, { "s": "S&P:SPX", "d": "标普500" }, { "s": "TVC:NI225", "d": "日经225" }, { "s": "TVC:UKX", "d": "富时100" } ] } ] }
                     </script>
                 </div>
             </div>
 
-            <div id="widget-news" class="ios-glass p-6 flex flex-col h-[420px]">
+            <div id="widget-news" class="ios-glass p-6 flex flex-col h-[380px]">
                 <div class="flex justify-between items-center mb-4 border-b border-white/10 pb-2">
                     <h3 class="ios-header mb-0 text-[var(--ios-blue)]">热点资讯</h3>
                     <span id="newsSourceLabel" class="text-[10px] bg-white/10 px-2 py-1 rounded text-white/70">百度</span>
@@ -153,16 +153,12 @@
                 <div id="newsList" class="space-y-3 overflow-y-auto scroll-hide flex-1 pr-1 text-sm"></div>
             </div>
 
-            <div id="widget-note" class="ios-glass p-6 h-[420px] flex flex-col">
+            <div id="widget-note" class="ios-glass p-6 h-[380px] flex flex-col">
                 <h3 class="ios-header mb-3">随手记</h3>
-                <textarea id="noteArea" class="w-full flex-1 bg-[rgba(255,255,255,0.05)] rounded-xl border-none outline-none text-[15px] leading-relaxed placeholder:text-[var(--ios-text-secondary)] mb-4 p-4 resize-none" placeholder="在此记录您的想法..."></textarea>
+                <textarea id="noteArea" class="w-full flex-1 bg-[rgba(255,255,255,0.05)] rounded-xl border-none outline-none text-[15px] leading-relaxed placeholder:text-[var(--ios-text-secondary)] mb-4 p-4 resize-none" placeholder="记录想法..."></textarea>
                 <div class="grid grid-cols-2 gap-3 mt-auto">
-                    <button onclick="window.open('https://mail.google.com')" class="ios-btn ios-btn-secondary flex items-center justify-center gap-2 text-sm">
-                        <span class="w-2 h-2 rounded-full bg-red-500"></span> Gmail
-                    </button>
-                    <button onclick="window.open('https://outlook.com')" class="ios-btn ios-btn-secondary flex items-center justify-center gap-2 text-sm">
-                        <span class="w-2 h-2 rounded-full bg-blue-500"></span> Outlook
-                    </button>
+                    <button onclick="window.open('https://mail.google.com')" class="ios-btn ios-btn-secondary flex items-center justify-center gap-2 text-xs py-3">Gmail</button>
+                    <button onclick="window.open('https://outlook.com')" class="ios-btn ios-btn-secondary flex items-center justify-center gap-2 text-xs py-3">Outlook</button>
                 </div>
             </div>
         </div>
@@ -179,30 +175,30 @@
         </div>
 
         <div class="space-y-8">
-            
             <section>
-                <h3 class="ios-header text-[var(--ios-blue)]">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-                    城市定位
-                </h3>
+                <h3 class="ios-header text-[var(--ios-blue)]">搜索引擎</h3>
+                <div class="relative">
+                    <select id="searchEngineSelect" class="ios-input appearance-none">
+                        <option value="google">Google</option>
+                        <option value="baidu">百度 (Baidu)</option>
+                        <option value="bing">必应 (Bing)</option>
+                        <option value="duckduckgo">DuckDuckGo</option>
+                    </select>
+                    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-white/50">▼</div>
+                </div>
+            </section>
+
+            <section>
+                <h3 class="ios-header">城市定位</h3>
                 <input id="cityInput" type="text" class="ios-input" placeholder="输入城市拼音 (如: Shanghai)">
             </section>
 
             <section>
                 <h3 class="ios-header">功能显示</h3>
                 <div class="bg-[var(--ios-input-bg)] rounded-xl p-4 space-y-4">
-                    <div class="flex justify-between items-center">
-                        <span class="text-sm font-medium">股市行情</span>
-                        <label class="ios-switch"><input type="checkbox" id="check-stock"><span class="slider"></span></label>
-                    </div>
-                    <div class="flex justify-between items-center border-t border-white/5 pt-4">
-                        <span class="text-sm font-medium">新闻热榜</span>
-                        <label class="ios-switch"><input type="checkbox" id="check-news"><span class="slider"></span></label>
-                    </div>
-                    <div class="flex justify-between items-center border-t border-white/5 pt-4">
-                        <span class="text-sm font-medium">备忘录与邮件</span>
-                        <label class="ios-switch"><input type="checkbox" id="check-note"><span class="slider"></span></label>
-                    </div>
+                    <div class="flex justify-between items-center"><span class="text-sm font-medium">股市行情</span><label class="ios-switch"><input type="checkbox" id="check-stock"><span class="slider"></span></label></div>
+                    <div class="flex justify-between items-center border-t border-white/5 pt-4"><span class="text-sm font-medium">新闻热榜</span><label class="ios-switch"><input type="checkbox" id="check-news"><span class="slider"></span></label></div>
+                    <div class="flex justify-between items-center border-t border-white/5 pt-4"><span class="text-sm font-medium">备忘录与邮件</span><label class="ios-switch"><input type="checkbox" id="check-note"><span class="slider"></span></label></div>
                 </div>
             </section>
 
@@ -245,12 +241,12 @@
             </section>
 
             <button onclick="saveAll()" class="ios-btn w-full mt-6 shadow-lg shadow-blue-500/30">保存并应用</button>
-            <p class="text-center text-xs text-[var(--ios-text-secondary)] mt-4 opacity-50">数据存储于本地浏览器</p>
         </div>
     </div>
 
     <script>
         let config = {
+            searchEngine: 'google', // 默认搜索引擎
             widgets: { stock: true, news: true, note: true },
             newsSource: 'baidu',
             bgMode: 'random',
@@ -261,8 +257,15 @@
             shortcuts: [ { name: 'GitHub', url: 'https://github.com' }, { name: 'Bilibili', url: 'https://bilibili.com' }, { name: 'ChatGPT', url: 'https://chat.openai.com' } ]
         };
 
+        const engines = {
+            google: "https://www.google.com/search?q=",
+            baidu: "https://www.baidu.com/s?wd=",
+            bing: "https://www.bing.com/search?q=",
+            duckduckgo: "https://duckduckgo.com/?q="
+        };
+
         function init() {
-            const saved = localStorage.getItem('idash_cn_v2');
+            const saved = localStorage.getItem('idash_cn_v4_search');
             if (saved) {
                 const parsed = JSON.parse(saved);
                 config = { ...config, ...parsed, widgets: { ...config.widgets, ...(parsed.widgets || {}) } };
@@ -270,13 +273,27 @@
             applyUI();
             startServices();
             renderShortcutsEdit();
+            
+            // 搜索功能初始化
+            const searchInput = document.getElementById('searchInput');
+            searchInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    const query = searchInput.value.trim();
+                    if (query) {
+                        const baseUrl = engines[config.searchEngine] || engines.google;
+                        window.open(baseUrl + encodeURIComponent(query), '_blank');
+                        searchInput.value = '';
+                    }
+                }
+            });
+
+            // 笔记初始化
             const note = document.getElementById('noteArea');
             note.value = localStorage.getItem('idash_note_cn') || '';
             note.addEventListener('input', e => localStorage.setItem('idash_note_cn', e.target.value));
         }
 
         function applyUI() {
-            // 设置值填充
             document.getElementById('cityInput').value = config.city;
             document.getElementById('check-stock').checked = config.widgets.stock;
             document.getElementById('check-news').checked = config.widgets.news;
@@ -285,21 +302,23 @@
             document.getElementById('bgMode').value = config.bgMode;
             document.getElementById('bgInterval').value = config.bgInterval;
             document.getElementById('bgUrlInput').value = config.bgMode === 'list' ? config.bgList.join('\n') : config.bgUrl;
+            
+            // 搜索设置回显
+            document.getElementById('searchEngineSelect').value = config.searchEngine;
+            // 更新 placeholder
+            const engineNames = { google: 'Google', baidu: '百度', bing: 'Bing', duckduckgo: 'DuckDuckGo' };
+            document.getElementById('searchInput').placeholder = `在 ${engineNames[config.searchEngine]} 上搜索...`;
 
-            // 模块显示
             document.getElementById('widget-stock').style.display = config.widgets.stock ? 'flex' : 'none';
             document.getElementById('widget-news').style.display = config.widgets.news ? 'flex' : 'none';
             document.getElementById('widget-note').style.display = config.widgets.note ? 'flex' : 'none';
 
-            // 标签更新
             const sourceNames = { 'baidu': '百度', 'weibo': '微博', 'zhihu': '知乎', 'tech': '科技' };
             document.getElementById('newsSourceLabel').innerText = sourceNames[config.newsSource] || '热点';
 
-            // 渲染快捷键
             document.getElementById('shortcutsDisplay').innerHTML = config.shortcuts.map(s => `
                 <a href="${s.url}" target="_blank" class="shortcut-item">
-                    <div class="shortcut-icon">➜</div>
-                    ${s.name}
+                    <div class="shortcut-icon">➜</div>${s.name}
                 </a>
             `).join('');
 
@@ -313,37 +332,36 @@
             config.widgets.news = document.getElementById('check-news').checked;
             config.widgets.note = document.getElementById('check-note').checked;
             config.newsSource = document.getElementById('newsSourceSelect').value;
+            config.searchEngine = document.getElementById('searchEngineSelect').value; // 保存搜索引擎
             config.bgMode = document.getElementById('bgMode').value;
             config.bgInterval = parseInt(document.getElementById('bgInterval').value) || 30;
             const uv = document.getElementById('bgUrlInput').value;
             if (config.bgMode === 'list') config.bgList = uv.split('\n').filter(l => l.trim());
             else config.bgUrl = uv;
             
-            localStorage.setItem('idash_cn_v2', JSON.stringify(config));
+            localStorage.setItem('idash_cn_v4_search', JSON.stringify(config));
             location.reload();
         }
 
         function startServices() {
-            // 天气 (wttr.in)
             const fetchWeather = () => {
                 fetch(`https://wttr.in/${config.city}?format=%c+%t+%C`)
                     .then(r => r.text()).then(t => {
                         const p = t.split(' ');
-                        document.getElementById('cityText').innerText = config.city;
-                        // 简单的清理字符
                         const temp = p[1] ? p[1].replace('+','').replace('°C','').replace('C','') : '--';
+                        document.getElementById('cityText').innerText = config.city;
                         document.getElementById('tempText').innerText = temp;
                         document.getElementById('weatherDesc').innerText = p.slice(2).join(' ') || '晴';
                     })
                     .catch(() => { document.getElementById('weatherDesc').innerText = '离线'; });
             };
-            fetchWeather(); setInterval(fetchWeather, 30*60000); // 30分钟刷新
+            fetchWeather(); setInterval(fetchWeather, 30*60000);
 
-            // 时钟 (中文格式)
             setInterval(() => {
                 const now = new Date();
+                const weekDays = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
                 document.getElementById('clock').innerText = now.toLocaleTimeString('zh-CN', { hour12: false, hour: '2-digit', minute: '2-digit' });
-                document.getElementById('date').innerText = now.toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' });
+                document.getElementById('date').innerText = `${now.getMonth() + 1}月${now.getDate()}日 ${weekDays[now.getDay()]}`;
             }, 1000);
 
             if (config.bgInterval > 0) setInterval(updateBackground, config.bgInterval * 60000);
