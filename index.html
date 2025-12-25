@@ -10,8 +10,7 @@
         :root {
             --ios-blue: #007AFF;
             --ios-green: #34C759;
-            --ios-red: #FF3B30;
-            --ios-bg-glass: rgba(30, 30, 30, 0.60);
+            --ios-bg-glass: rgba(30, 30, 30, 0.65); /* 稍微加深底色以适应 Bing 复杂壁纸 */
             --ios-border: rgba(255, 255, 255, 0.12);
             --ios-text-primary: rgba(255, 255, 255, 0.95);
             --ios-text-secondary: rgba(255, 255, 255, 0.6);
@@ -23,7 +22,7 @@
             overflow: hidden; background: #000; color: var(--ios-text-primary); -webkit-font-smoothing: antialiased;
         }
         
-        /* 背景层：已优化加载速度 */
+        /* 背景层 */
         .bg-layer { position: fixed; inset: 0; z-index: -1; background-size: cover; background-position: center; transition: background 1.2s cubic-bezier(0.4, 0, 0.2, 1); }
         
         /* 毛玻璃容器 */
@@ -67,7 +66,7 @@
         input:checked + .slider { background-color: var(--ios-green); }
         input:checked + .slider:before { transform: translateX(20px); }
 
-        /* --- 效率中心样式 --- */
+        /* 效率中心样式 */
         .tab-btn { flex: 1; text-align: center; padding: 8px; font-size: 13px; font-weight: 500; color: var(--ios-text-secondary); cursor: pointer; border-radius: 8px; transition: all 0.2s; }
         .tab-btn.active { background: rgba(99, 99, 102, 0.4); color: white; font-weight: 600; }
         
@@ -90,7 +89,7 @@
 </head>
 <body>
 
-    <div id="mainBg" class="bg-layer" style="background-image: url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=60&w=1280&auto=format');"></div>
+    <div id="mainBg" class="bg-layer" style="background-image: url('https://bing.biturl.top/?resolution=1920&format=image&index=0&mkt=zh-CN');"></div>
 
     <div class="relative h-screen w-full flex flex-col p-6 md:p-10 overflow-y-auto scroll-hide items-center">
         
@@ -105,7 +104,7 @@
                     <span id="tempText" class="text-sm font-bold">--</span>
                     <span class="text-xs opacity-60">°C</span>
                     <span class="w-[1px] h-3 bg-white/20"></span>
-                    <span id="cityText" class="text-xs uppercase tracking-wider opacity-70">LOCATING</span>
+                    <span id="cityText" class="text-xs uppercase tracking-wider opacity-70">定位中</span>
                 </div>
                 <p id="dailyQuote" class="text-xs text-white/60 italic max-w-md px-4 truncate">"Stay hungry, stay foolish."</p>
             </div>
@@ -151,20 +150,14 @@
                 </div>
                 <div id="tab-todo" class="flex-1 flex flex-col h-full hidden">
                     <div class="flex gap-2 mb-3">
-                        <input id="todoInput" type="text" class="ios-input py-2 text-sm" placeholder="添加新任务..." onkeypress="if(event.key==='Enter') addTodo()">
+                        <input id="todoInput" type="text" class="ios-input py-2 text-sm" placeholder="新任务..." onkeypress="if(event.key==='Enter') addTodo()">
                         <button onclick="addTodo()" class="bg-white/10 hover:bg-white/20 rounded-lg px-3 text-lg">+</button>
                     </div>
                     <div id="todoList" class="flex-1 overflow-y-auto scroll-hide"></div>
                 </div>
                 <div id="tab-timer" class="flex-1 flex flex-col items-center justify-center hidden">
-                    <div class="timer-circle">
-                        <span id="timerDisplay" class="timer-time">25:00</span>
-                        <span id="timerStatus" class="timer-status">FOCUS</span>
-                    </div>
-                    <div class="flex gap-4 mt-2">
-                        <button onclick="toggleTimer()" id="timerBtn" class="ios-btn px-6">开始</button>
-                        <button onclick="resetTimer()" class="ios-btn bg-white/10 hover:bg-white/20">重置</button>
-                    </div>
+                    <div class="timer-circle"><span id="timerDisplay" class="timer-time">25:00</span><span id="timerStatus" class="timer-status">FOCUS</span></div>
+                    <div class="flex gap-4 mt-2"><button onclick="toggleTimer()" id="timerBtn" class="ios-btn px-6">开始</button><button onclick="resetTimer()" class="ios-btn bg-white/10 hover:bg-white/20">重置</button></div>
                 </div>
             </div>
         </div>
@@ -188,7 +181,7 @@
                 <div class="flex justify-between items-center border-t border-white/5 pt-4"><span class="text-sm font-medium">新闻热榜</span><label class="ios-switch"><input type="checkbox" id="check-news"><span class="slider"></span></label></div>
                 <div class="flex justify-between items-center border-t border-white/5 pt-4"><span class="text-sm font-medium">效率中心</span><label class="ios-switch"><input type="checkbox" id="check-hub"><span class="slider"></span></label></div>
             </div></section>
-            <section><h3 class="ios-header">个性化</h3><div class="space-y-4"><div><label class="text-xs text-[var(--ios-text-secondary)] mb-2 block">新闻来源</label><select id="newsSourceSelect" class="ios-input appearance-none"><option value="baidu">百度热搜</option><option value="weibo">微博热搜</option><option value="zhihu">知乎热榜</option><option value="tech">科技前沿</option></select></div><div><label class="text-xs text-[var(--ios-text-secondary)] mb-2 block">壁纸模式</label><select id="bgMode" class="ios-input appearance-none"><option value="random">自动随机 (Unsplash)</option><option value="fixed">固定图片</option><option value="list">自定义轮播列表</option></select></div><textarea id="bgUrlInput" class="ios-input h-20" placeholder="输入图片 URL (每行一个)..."></textarea><div class="flex items-center justify-between bg-[var(--ios-input-bg)] p-3 rounded-xl"><span class="text-xs text-[var(--ios-text-secondary)]">轮播间隔 (分钟)</span><input id="bgInterval" type="number" class="ios-input w-16 text-center p-1 bg-white/10" value="30"></div></div></section>
+            <section><h3 class="ios-header">个性化</h3><div class="space-y-4"><div><label class="text-xs text-[var(--ios-text-secondary)] mb-2 block">新闻来源</label><select id="newsSourceSelect" class="ios-input appearance-none"><option value="baidu">百度热搜</option><option value="weibo">微博热搜</option><option value="zhihu">知乎热榜</option><option value="tech">科技前沿</option></select></div><div><label class="text-xs text-[var(--ios-text-secondary)] mb-2 block">壁纸模式</label><select id="bgMode" class="ios-input appearance-none"><option value="random">自动随机 (Bing/Unsplash)</option><option value="fixed">固定图片</option><option value="list">自定义轮播列表</option></select></div><textarea id="bgUrlInput" class="ios-input h-20" placeholder="输入图片 URL (每行一个)..."></textarea><div class="flex items-center justify-between bg-[var(--ios-input-bg)] p-3 rounded-xl"><span class="text-xs text-[var(--ios-text-secondary)]">轮播间隔 (分钟)</span><input id="bgInterval" type="number" class="ios-input w-16 text-center p-1 bg-white/10" value="30"></div></div></section>
             <section><h3 class="ios-header">快捷导航</h3><div id="shortcutList" class="space-y-2 mb-3 max-h-32 overflow-y-auto bg-[var(--ios-input-bg)] rounded-xl p-2"></div><div class="flex gap-2"><input id="newSiteName" type="text" placeholder="名称" class="ios-input w-1/3"><input id="newSiteUrl" type="text" placeholder="网址" class="ios-input w-2/3"></div><button onclick="addShortcut()" class="ios-btn ios-btn-secondary w-full mt-3">添加站点</button></section>
             <button onclick="saveAll()" class="ios-btn w-full mt-6 shadow-lg shadow-blue-500/30">保存并应用</button>
         </div>
@@ -205,7 +198,7 @@
         let timerInterval = null, timeLeft = 25 * 60, isTimerRunning = false;
 
         function init() {
-            const saved = localStorage.getItem('idash_fast_v2');
+            const saved = localStorage.getItem('idash_cn_bing');
             if (saved) {
                 const parsed = JSON.parse(saved);
                 config = { ...config, ...parsed, widgets: { ...config.widgets, ...(parsed.widgets || {}) }, todos: parsed.todos || [] };
@@ -216,8 +209,8 @@
             renderTodos();
             
             const note = document.getElementById('noteArea');
-            note.value = localStorage.getItem('idash_note_fast') || '';
-            note.addEventListener('input', e => localStorage.setItem('idash_note_fast', e.target.value));
+            note.value = localStorage.getItem('idash_note_cn') || '';
+            note.addEventListener('input', e => localStorage.setItem('idash_note_cn', e.target.value));
 
             document.getElementById('searchInput').addEventListener('keydown', (e) => {
                 if(e.key==='Enter' && e.target.value.trim()) {
@@ -278,7 +271,7 @@
         function addTodo() { const t = document.getElementById('todoInput').value.trim(); if(t) { config.todos.push({text:t, done:false}); document.getElementById('todoInput').value=''; saveTodos(); } }
         function toggleTodo(i) { config.todos[i].done = !config.todos[i].done; saveTodos(); }
         function deleteTodo(i) { config.todos.splice(i, 1); saveTodos(); }
-        function saveTodos() { renderTodos(); const s = localStorage.getItem('idash_fast_v2'); let d = s ? JSON.parse(s) : {}; d.todos = config.todos; localStorage.setItem('idash_fast_v2', JSON.stringify(d)); }
+        function saveTodos() { renderTodos(); const s = localStorage.getItem('idash_cn_bing'); let d = s ? JSON.parse(s) : {}; d.todos = config.todos; localStorage.setItem('idash_cn_bing', JSON.stringify(d)); }
 
         function toggleTimer() {
             const btn = document.getElementById('timerBtn'); const st = document.getElementById('timerStatus');
@@ -302,7 +295,7 @@
             config.bgInterval = parseInt(document.getElementById('bgInterval').value) || 30;
             const uv = document.getElementById('bgUrlInput').value;
             if (config.bgMode === 'list') config.bgList = uv.split('\n').filter(l => l.trim()); else config.bgUrl = uv;
-            localStorage.setItem('idash_fast_v2', JSON.stringify(config)); location.reload();
+            localStorage.setItem('idash_cn_bing', JSON.stringify(config)); location.reload();
         }
 
         function startServices() {
@@ -315,7 +308,7 @@
         function updateBackground() {
             let url = '';
             if (config.bgMode === 'fixed') url = config.bgUrl;
-            else if (config.bgMode === 'random') url = `https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=60&w=1280&auto=format`;
+            else if (config.bgMode === 'random') url = `https://bing.biturl.top/?resolution=1920&format=image&index=0&mkt=zh-CN`;
             if (config.bgMode === 'list' && config.bgList.length > 0) { config.lastBgIndex = (config.lastBgIndex + 1) % config.bgList.length; url = config.bgList[config.lastBgIndex]; }
             if (url) { const img = new Image(); img.src = url; img.onload = () => document.getElementById('mainBg').style.backgroundImage = `url('${url}')`; }
         }
