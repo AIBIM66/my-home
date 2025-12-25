@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>我的主页</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* --- iOS 设计语言系统 (中文优化版) --- */
+        :root {
+            --ios-blue: #007AFF;
+            --ios-green: #34C759;
+            --ios-bg-glass: rgba(30, 30, 30, 0.65); /* 加深底色以提升文字对比度 */
+            --ios-border: rgba(255, 255, 255, 0.12);
+            --ios-text-primary: rgba(255, 255, 255, 0.95);
+            --ios-text-secondary: rgba(255, 255, 255, 0.6);
+            --ios-input-bg: rgba(118, 118, 128, 0.24);
+        }
+
+        body { 
+            margin: 0; 
+            /* 中文 iOS 字体栈优先 */
+            font-family: -apple-system, "PingFang SC", "Microsoft YaHei", "Helvetica Neue", sans-serif; 
+            overflow: hidden; 
+            background: #000; 
+            color: var(--ios-text-primary); 
+            -webkit-font-smoothing: antialiased;
+        }
+        
+        .bg-layer { position: fixed; inset: 0; z-index: -1; background-size: cover; background-position: center; transition: background 1.2s cubic-bezier(0.4, 0, 0.2, 1); }
+        
+        /* 核心：iOS 毛玻璃材质 */
+        .ios-glass {
+            background: var(--ios-bg-glass);
+            backdrop-filter: blur(40px) saturate(160%);
+            -webkit-backdrop-filter: blur(40px) saturate(160%);
+            border: 1px solid var(--ios-border);
+            border-radius: 24px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        /* 标题样式 */
+        .ios-header {
+            font-size: 12px;
+            font-weight: 600;
+            opacity: 0.7;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* 输入框 */
+        .ios-input {
+            background: var(--ios-input-bg);
+            border: none;
+            padding: 12px 16px;
+            border-radius: 12px;
+            width: 100%;
+            color: white;
+            outline: none;
+            font-size: 14px;
+            transition: background 0.2s;
+        }
+        .ios-input:focus { background: rgba(118, 118, 128, 0.4); }
+        .ios-input::placeholder { color: var(--ios-text-secondary); }
+
+        /* 按钮 */
+        .ios-btn {
+            background: var(--ios-blue);
+            color: white;
+            font-weight: 500;
+            font-size: 14px;
+            padding: 10px 16px;
+            border-radius: 12px;
+            transition: all 0.2s;
+        }
+        .ios-btn:active { transform: scale(0.96); }
+        .ios-btn-secondary { background: rgba(255,255,255,0.1); color: white; backdrop-filter: blur(10px); }
+
+        /* 快捷图标 */
+        .shortcut-item {
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 18px;
+            padding: 10px 20px;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s;
+            display: flex; align-items: center; gap: 10px;
+            color: rgba(255,255,255,0.9);
+        }
+        .shortcut-item:hover { background: rgba(255,255,255,0.15); transform: translateY(-2px); border-color: rgba(255,255,255,0.2); }
+        .shortcut-icon { width: 20px; height: 20px; background: var(--ios-blue); border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 10px; }
+
+        /* 开关组件 (Switch) */
+        .ios-switch { position: relative; display: inline-block; width: 44px; height: 24px; }
+        .ios-switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(120,120,128,0.32); transition: .4s; border-radius: 24px; }
+        .slider:before { position: absolute; content: ""; height: 20px; width: 20px; left: 2px; bottom: 2px; background-color: white; transition: .4s; border-radius: 50%; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+        input:checked + .slider { background-color: var(--ios-green); }
+        input:checked + .slider:before { transform: translateX(20px); }
+
+        /* 滚动条隐藏 */
+        .scroll-hide::-webkit-scrollbar { display: none; }
+        /* 股市图表滤镜 */
+        .tv-widget { filter: invert(1) hue-rotate(180deg) contrast(0.85) brightness(1.1); mix-blend-mode: screen; opacity: 0.9; }
+    </style>
+</head>
+<body>
+
+    <div id="mainBg" class="bg-layer" style="background-image: url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2564');"></div>
+
+    <div class="relative h-screen w-full flex flex-col p-6 md:p-10 overflow-y-auto scroll-hide">
+        
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-6">
+            <div class="ios-glass px-6 py-4 flex items-center gap-6 cursor-default hover:bg-white/10 transition">
+                <div class="flex flex-col">
+                    <span id="cityText" class="font-bold text-sm text-[var(--ios-blue)] tracking-wide">定位中...</span>
+                    <span id="weatherDesc" class="text-xs text-[var(--ios-text-secondary)] mt-1">--</span>
+                </div>
+                <div class="flex items-start">
+                    <span id="tempText" class="text-5xl font-light">--</span>
+                    <span class="text-xl font-light mt-1 text-[var(--ios-text-secondary)]">°C</span>
+                </div>
+            </div>
+            
+            <div class="text-left md:text-right">
+                <h1 id="clock" class="text-7xl font-semibold tracking-tighter leading-none font-[Helvetica Neue]">00:00</h1>
+                <p id="date" class="text-base text-[var(--ios-text-secondary)] mt-2 font-medium">载入日期...</p>
+            </div>
+        </div>
+
+        <div id="shortcutsDisplay" class="flex flex-wrap justify-start md:justify-center gap-4 mb-8"></div>
+
+        <div id="widgetGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-[1800px] mx-auto w-full flex-1 mb-6">
+            
+            <div id="widget-stock" class="lg:col-span-2 ios-glass p-1 flex flex-col h-[420px] overflow-hidden relative">
+                <div class="tradingview-widget-container w-full h-full tv-widget">
+                    <div class="tradingview-widget-container__widget"></div>
+                    <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-market-overview.js" async>
+                    { "colorTheme": "light", "dateRange": "12M", "showChart": true, "locale": "zh_CN", "width": "100%", "height": "100%", "isTransparent": true,
+                      "tabs": [ { "title": "全球指数", "symbols": [ { "s": "NASDAQ:NDX", "d": "纳斯达克100" }, { "s": "S&P:SPX", "d": "标普500" }, { "s": "TVC:NI225", "d": "日经225" }, { "s": "TVC:UKX", "d": "富时100" } ] } ] }
+                    </script>
+                </div>
+            </div>
+
+            <div id="widget-news" class="ios-glass p-6 flex flex-col h-[420px]">
+                <div class="flex justify-between items-center mb-4 border-b border-white/10 pb-2">
+                    <h3 class="ios-header mb-0 text-[var(--ios-blue)]">热点资讯</h3>
+                    <span id="newsSourceLabel" class="text-[10px] bg-white/10 px-2 py-1 rounded text-white/70">百度</span>
+                </div>
+                <div id="newsList" class="space-y-3 overflow-y-auto scroll-hide flex-1 pr-1 text-sm"></div>
+            </div>
+
+            <div id="widget-note" class="ios-glass p-6 h-[420px] flex flex-col">
+                <h3 class="ios-header mb-3">随手记</h3>
+                <textarea id="noteArea" class="w-full flex-1 bg-[rgba(255,255,255,0.05)] rounded-xl border-none outline-none text-[15px] leading-relaxed placeholder:text-[var(--ios-text-secondary)] mb-4 p-4 resize-none" placeholder="在此记录您的想法..."></textarea>
+                <div class="grid grid-cols-2 gap-3 mt-auto">
+                    <button onclick="window.open('https://mail.google.com')" class="ios-btn ios-btn-secondary flex items-center justify-center gap-2 text-sm">
+                        <span class="w-2 h-2 rounded-full bg-red-500"></span> Gmail
+                    </button>
+                    <button onclick="window.open('https://outlook.com')" class="ios-btn ios-btn-secondary flex items-center justify-center gap-2 text-sm">
+                        <span class="w-2 h-2 rounded-full bg-blue-500"></span> Outlook
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <button onclick="toggleSettings(true)" class="fixed bottom-8 right-8 w-12 h-12 flex items-center justify-center ios-glass hover:bg-white/20 transition-all rounded-full z-40 shadow-2xl">
+            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path></svg>
+        </button>
+    </div>
+
+    <div id="settingsPanel" class="fixed inset-y-0 right-0 w-full md:w-[400px] bg-[#1c1c1e] z-50 translate-x-full transition-transform duration-500 p-6 overflow-y-auto scroll-hide shadow-2xl border-l border-white/10">
+        <div class="flex justify-between items-center mb-8">
+            <h2 class="text-lg font-bold">设置中心</h2>
+            <button onclick="toggleSettings(false)" class="w-8 h-8 flex items-center justify-center bg-[var(--ios-input-bg)] rounded-full text-[var(--ios-text-secondary)] hover:bg-white/20 transition">&times;</button>
+        </div>
+
+        <div class="space-y-8">
+            
+            <section>
+                <h3 class="ios-header text-[var(--ios-blue)]">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                    城市定位
+                </h3>
+                <input id="cityInput" type="text" class="ios-input" placeholder="输入城市拼音 (如: Shanghai)">
+            </section>
+
+            <section>
+                <h3 class="ios-header">功能显示</h3>
+                <div class="bg-[var(--ios-input-bg)] rounded-xl p-4 space-y-4">
+                    <div class="flex justify-between items-center">
+                        <span class="text-sm font-medium">股市行情</span>
+                        <label class="ios-switch"><input type="checkbox" id="check-stock"><span class="slider"></span></label>
+                    </div>
+                    <div class="flex justify-between items-center border-t border-white/5 pt-4">
+                        <span class="text-sm font-medium">新闻热榜</span>
+                        <label class="ios-switch"><input type="checkbox" id="check-news"><span class="slider"></span></label>
+                    </div>
+                    <div class="flex justify-between items-center border-t border-white/5 pt-4">
+                        <span class="text-sm font-medium">备忘录与邮件</span>
+                        <label class="ios-switch"><input type="checkbox" id="check-note"><span class="slider"></span></label>
+                    </div>
+                </div>
+            </section>
+
+            <section>
+                 <h3 class="ios-header">个性化</h3>
+                 <div class="space-y-4">
+                    <div>
+                        <label class="text-xs text-[var(--ios-text-secondary)] mb-2 block">新闻来源</label>
+                        <select id="newsSourceSelect" class="ios-input appearance-none">
+                            <option value="baidu">百度热搜</option>
+                            <option value="weibo">微博热搜</option>
+                            <option value="zhihu">知乎热榜</option>
+                            <option value="tech">科技前沿</option>
+                        </select>
+                    </div>
+                    <div>
+                         <label class="text-xs text-[var(--ios-text-secondary)] mb-2 block">壁纸模式</label>
+                        <select id="bgMode" class="ios-input appearance-none">
+                            <option value="random">自动随机 (Unsplash)</option>
+                            <option value="fixed">固定图片</option>
+                            <option value="list">自定义轮播列表</option>
+                        </select>
+                    </div>
+                    <textarea id="bgUrlInput" class="ios-input h-20" placeholder="输入图片 URL (每行一个)..."></textarea>
+                    <div class="flex items-center justify-between bg-[var(--ios-input-bg)] p-3 rounded-xl">
+                        <span class="text-xs text-[var(--ios-text-secondary)]">轮播间隔 (分钟)</span>
+                        <input id="bgInterval" type="number" class="ios-input w-16 text-center p-1 bg-white/10" value="30">
+                    </div>
+                 </div>
+            </section>
+
+            <section>
+                <h3 class="ios-header">快捷导航</h3>
+                <div id="shortcutList" class="space-y-2 mb-3 max-h-32 overflow-y-auto bg-[var(--ios-input-bg)] rounded-xl p-2"></div>
+                <div class="flex gap-2">
+                    <input id="newSiteName" type="text" placeholder="名称" class="ios-input w-1/3">
+                    <input id="newSiteUrl" type="text" placeholder="网址 https://..." class="ios-input w-2/3">
+                </div>
+                <button onclick="addShortcut()" class="ios-btn ios-btn-secondary w-full mt-3">添加站点</button>
+            </section>
+
+            <button onclick="saveAll()" class="ios-btn w-full mt-6 shadow-lg shadow-blue-500/30">保存并应用</button>
+            <p class="text-center text-xs text-[var(--ios-text-secondary)] mt-4 opacity-50">数据存储于本地浏览器</p>
+        </div>
+    </div>
+
+    <script>
+        let config = {
+            widgets: { stock: true, news: true, note: true },
+            newsSource: 'baidu',
+            bgMode: 'random',
+            bgUrl: '',
+            bgList: [],
+            bgInterval: 30,
+            city: 'Shanghai',
+            shortcuts: [ { name: 'GitHub', url: 'https://github.com' }, { name: 'Bilibili', url: 'https://bilibili.com' }, { name: 'ChatGPT', url: 'https://chat.openai.com' } ]
+        };
+
+        function init() {
+            const saved = localStorage.getItem('idash_cn_v2');
+            if (saved) {
+                const parsed = JSON.parse(saved);
+                config = { ...config, ...parsed, widgets: { ...config.widgets, ...(parsed.widgets || {}) } };
+            }
+            applyUI();
+            startServices();
+            renderShortcutsEdit();
+            const note = document.getElementById('noteArea');
+            note.value = localStorage.getItem('idash_note_cn') || '';
+            note.addEventListener('input', e => localStorage.setItem('idash_note_cn', e.target.value));
+        }
+
+        function applyUI() {
+            // 设置值填充
+            document.getElementById('cityInput').value = config.city;
+            document.getElementById('check-stock').checked = config.widgets.stock;
+            document.getElementById('check-news').checked = config.widgets.news;
+            document.getElementById('check-note').checked = config.widgets.note;
+            document.getElementById('newsSourceSelect').value = config.newsSource;
+            document.getElementById('bgMode').value = config.bgMode;
+            document.getElementById('bgInterval').value = config.bgInterval;
+            document.getElementById('bgUrlInput').value = config.bgMode === 'list' ? config.bgList.join('\n') : config.bgUrl;
+
+            // 模块显示
+            document.getElementById('widget-stock').style.display = config.widgets.stock ? 'flex' : 'none';
+            document.getElementById('widget-news').style.display = config.widgets.news ? 'flex' : 'none';
+            document.getElementById('widget-note').style.display = config.widgets.note ? 'flex' : 'none';
+
+            // 标签更新
+            const sourceNames = { 'baidu': '百度', 'weibo': '微博', 'zhihu': '知乎', 'tech': '科技' };
+            document.getElementById('newsSourceLabel').innerText = sourceNames[config.newsSource] || '热点';
+
+            // 渲染快捷键
+            document.getElementById('shortcutsDisplay').innerHTML = config.shortcuts.map(s => `
+                <a href="${s.url}" target="_blank" class="shortcut-item">
+                    <div class="shortcut-icon">➜</div>
+                    ${s.name}
+                </a>
+            `).join('');
+
+            renderNews();
+            updateBackground();
+        }
+
+        function saveAll() {
+            config.city = document.getElementById('cityInput').value || 'Shanghai';
+            config.widgets.stock = document.getElementById('check-stock').checked;
+            config.widgets.news = document.getElementById('check-news').checked;
+            config.widgets.note = document.getElementById('check-note').checked;
+            config.newsSource = document.getElementById('newsSourceSelect').value;
+            config.bgMode = document.getElementById('bgMode').value;
+            config.bgInterval = parseInt(document.getElementById('bgInterval').value) || 30;
+            const uv = document.getElementById('bgUrlInput').value;
+            if (config.bgMode === 'list') config.bgList = uv.split('\n').filter(l => l.trim());
+            else config.bgUrl = uv;
+            
+            localStorage.setItem('idash_cn_v2', JSON.stringify(config));
+            location.reload();
+        }
+
+        function startServices() {
+            // 天气 (wttr.in)
+            const fetchWeather = () => {
+                fetch(`https://wttr.in/${config.city}?format=%c+%t+%C`)
+                    .then(r => r.text()).then(t => {
+                        const p = t.split(' ');
+                        document.getElementById('cityText').innerText = config.city;
+                        // 简单的清理字符
+                        const temp = p[1] ? p[1].replace('+','').replace('°C','').replace('C','') : '--';
+                        document.getElementById('tempText').innerText = temp;
+                        document.getElementById('weatherDesc').innerText = p.slice(2).join(' ') || '晴';
+                    })
+                    .catch(() => { document.getElementById('weatherDesc').innerText = '离线'; });
+            };
+            fetchWeather(); setInterval(fetchWeather, 30*60000); // 30分钟刷新
+
+            // 时钟 (中文格式)
+            setInterval(() => {
+                const now = new Date();
+                document.getElementById('clock').innerText = now.toLocaleTimeString('zh-CN', { hour12: false, hour: '2-digit', minute: '2-digit' });
+                document.getElementById('date').innerText = now.toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' });
+            }, 1000);
+
+            if (config.bgInterval > 0) setInterval(updateBackground, config.bgInterval * 60000);
+        }
+
+        function updateBackground() {
+            let url = '';
+            if (config.bgMode === 'fixed') url = config.bgUrl;
+            else if (config.bgMode === 'random') url = `https://source.unsplash.com/featured/2560x1440?abstract,minimal,nature&t=${new Date().getTime()}`;
+            if (config.bgMode === 'list' && config.bgList.length > 0) {
+                config.lastBgIndex = (config.lastBgIndex + 1) % config.bgList.length;
+                url = config.bgList[config.lastBgIndex];
+            }
+            if (url) { const img = new Image(); img.src = url; img.onload = () => document.getElementById('mainBg').style.backgroundImage = `url('${url}')`; }
+        }
+
+        function renderNews() {
+            const list = document.getElementById('newsList');
+            const sourceMap = {
+                'baidu': ["国产大模型全面开放公测", "2025年放假安排正式公布", "全球股市迎来技术性牛市", "新一代固态电池量产时间表", "人工智能立法草案征求意见"],
+                'weibo': ["#周五快乐# 爆", "#新iOS功能# 沸", "年度十大流行语出炉", "流浪猫救助计划启动", "周末去哪儿玩"],
+                'zhihu': ["如何评价 GPT-5 的发布？", "30岁转行程序员还来得及吗？", "人类能在2030年登陆火星吗？", "极简主义生活是一种什么体验？", "有哪些相见恨晚的效率工具？"],
+                'tech': ["OpenAI 发布 GPT-5 Turbo", "SpaceX 星舰完成轨道测试", "量子计算取得重大突破", "苹果 Vision Pro 2 规格泄露", "新一代 ARM 芯片架构详解"]
+            };
+            const data = sourceMap[config.newsSource] || sourceMap['baidu'];
+            list.innerHTML = data.map((item, i) => `
+                <div class="flex items-center gap-3 py-3 border-b border-white/5 hover:bg-white/5 transition rounded-lg px-2 cursor-pointer">
+                    <span class="text-[var(--ios-blue)] font-bold text-sm min-w-[15px]">${i+1}</span>
+                    <p class="font-medium text-[14px] leading-snug truncate opacity-90">${item}</p>
+                </div>
+            `).join('');
+        }
+
+        function renderShortcutsEdit() {
+            document.getElementById('shortcutList').innerHTML = config.shortcuts.map((s, idx) => `
+                <div class="flex justify-between items-center p-3 bg-white/5 rounded-lg mb-2">
+                    <span class="font-medium truncate w-32 text-sm">${s.name}</span>
+                    <button onclick="removeShortcut(${idx})" class="text-red-400 font-medium text-xs hover:bg-red-500/10 px-2 py-1 rounded transition">删除</button>
+                </div>
+            `).join('');
+        }
+        function addShortcut() { const name = document.getElementById('newSiteName').value.trim(); const url = document.getElementById('newSiteUrl').value.trim(); if (name && url) { config.shortcuts.push({ name, url }); renderShortcutsEdit(); document.getElementById('newSiteName').value=''; document.getElementById('newSiteUrl').value=''; }}
+        function removeShortcut(idx) { config.shortcuts.splice(idx, 1); renderShortcutsEdit(); }
+        function toggleSettings(s) { document.getElementById('settingsPanel').classList.toggle('translate-x-full', !s); }
+
+        window.onload = init;
+    </script>
+</body>
+</html>
