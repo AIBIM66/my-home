@@ -5,12 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>我的主页</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
     <style>
         /* --- iOS 设计语言系统 --- */
         :root {
             --ios-blue: #007AFF;
             --ios-green: #34C759;
-            --ios-bg-glass: rgba(30, 30, 30, 0.65); /* 稍微加深底色以适应 Bing 复杂壁纸 */
+            --ios-bg-glass: rgba(30, 30, 30, 0.65);
             --ios-border: rgba(255, 255, 255, 0.12);
             --ios-text-primary: rgba(255, 255, 255, 0.95);
             --ios-text-secondary: rgba(255, 255, 255, 0.6);
@@ -22,18 +23,21 @@
             overflow: hidden; background: #000; color: var(--ios-text-primary); -webkit-font-smoothing: antialiased;
         }
         
-        /* 背景层 */
         .bg-layer { position: fixed; inset: 0; z-index: -1; background-size: cover; background-position: center; transition: background 1.2s cubic-bezier(0.4, 0, 0.2, 1); }
         
-        /* 毛玻璃容器 */
+        /* 毛玻璃容器 - 增加拖拽时的抓手样式 */
         .ios-glass {
             background: var(--ios-bg-glass);
             backdrop-filter: blur(40px) saturate(160%); -webkit-backdrop-filter: blur(40px) saturate(160%);
             border: 1px solid var(--ios-border); border-radius: 24px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3); transition: transform 0.2s;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3); transition: transform 0.2s, box-shadow 0.2s;
+            cursor: grab; /* 鼠标变为抓手 */
         }
+        .ios-glass:active { cursor: grabbing; transform: scale(1.01); box-shadow: 0 15px 50px rgba(0,0,0,0.5); z-index: 10; }
 
-        /* 搜索框 */
+        /* 拖拽时的占位样式 (Ghost Class) */
+        .sortable-ghost { opacity: 0.4; background: rgba(255,255,255,0.1); border: 2px dashed rgba(255,255,255,0.3); }
+
         .ios-search-bar {
             background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(20px);
             border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 50px;
@@ -42,14 +46,12 @@
         .ios-search-bar:focus-within { background: rgba(255, 255, 255, 0.15); border-color: var(--ios-blue); box-shadow: 0 0 0 4px rgba(0, 122, 255, 0.15); }
         .search-input { background: transparent; border: none; outline: none; color: white; width: 100%; font-size: 16px; height: 100%; }
         
-        /* 通用组件 */
-        .ios-header { font-size: 12px; font-weight: 600; opacity: 0.7; margin-bottom: 12px; display: flex; align-items: center; gap: 6px; text-transform: uppercase; letter-spacing: 0.05em; }
+        .ios-header { font-size: 12px; font-weight: 600; opacity: 0.7; margin-bottom: 12px; display: flex; align-items: center; gap: 6px; text-transform: uppercase; letter-spacing: 0.05em; pointer-events: none; /* 防止文字被选中干扰拖拽 */ }
         .ios-input { background: var(--ios-input-bg); border: none; padding: 12px 16px; border-radius: 12px; width: 100%; color: white; outline: none; font-size: 14px; }
         .ios-btn { background: var(--ios-blue); color: white; font-weight: 500; font-size: 14px; padding: 8px 16px; border-radius: 10px; cursor: pointer; transition: opacity 0.2s; }
         .ios-btn:active { opacity: 0.7; }
         .ios-btn-secondary { background: rgba(255,255,255,0.1); color: white; backdrop-filter: blur(10px); }
         
-        /* 快捷图标 */
         .shortcut-item {
             background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.05); border-radius: 18px;
             padding: 10px 20px; font-size: 14px; font-weight: 500; transition: all 0.3s;
@@ -58,7 +60,6 @@
         .shortcut-item:hover { background: rgba(255,255,255,0.15); transform: translateY(-2px); }
         .shortcut-icon { width: 20px; height: 20px; background: var(--ios-blue); border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 10px; color: white; }
 
-        /* Switch 开关 */
         .ios-switch { position: relative; display: inline-block; width: 44px; height: 24px; }
         .ios-switch input { opacity: 0; width: 0; height: 0; }
         .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(120,120,128,0.32); transition: .4s; border-radius: 24px; }
@@ -70,7 +71,7 @@
         .tab-btn { flex: 1; text-align: center; padding: 8px; font-size: 13px; font-weight: 500; color: var(--ios-text-secondary); cursor: pointer; border-radius: 8px; transition: all 0.2s; }
         .tab-btn.active { background: rgba(99, 99, 102, 0.4); color: white; font-weight: 600; }
         
-        .todo-item { display: flex; align-items: center; gap: 10px; padding: 10px; background: rgba(255,255,255,0.05); border-radius: 10px; margin-bottom: 8px; transition: all 0.2s; }
+        .todo-item { display: flex; align-items: center; gap: 10px; padding: 10px; background: rgba(255,255,255,0.05); border-radius: 10px; margin-bottom: 8px; transition: all 0.2s; cursor: default; } /* 内部元素防止拖拽干扰 */
         .todo-checkbox { width: 20px; height: 20px; border: 2px solid var(--ios-text-secondary); border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
         .todo-item.done .todo-checkbox { background: var(--ios-green); border-color: var(--ios-green); }
         .todo-item.done .todo-text { text-decoration: line-through; opacity: 0.4; }
@@ -85,6 +86,9 @@
         .scroll-hide::-webkit-scrollbar { display: none; }
         .tv-widget { filter: invert(1) hue-rotate(180deg) contrast(0.85) brightness(1.1); mix-blend-mode: screen; opacity: 0.9; }
         .clock-font { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-variant-numeric: tabular-nums; }
+        
+        /* 交互区防止拖拽触发 */
+        textarea, input, button { cursor: auto; }
     </style>
 </head>
 <body>
@@ -121,9 +125,8 @@
 
         <div id="widgetGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-[1600px] w-full flex-1 mb-6">
             
-            <div id="widget-stock" class="lg:col-span-2 ios-glass p-1 flex flex-col h-[400px] overflow-hidden relative">
-                <div class="tradingview-widget-container w-full h-full tv-widget">
-                    <div class="tradingview-widget-container__widget"></div>
+            <div data-id="stock" id="widget-stock" class="lg:col-span-2 ios-glass p-1 flex flex-col h-[400px] overflow-hidden relative">
+                <div class="tradingview-widget-container w-full h-full tv-widget pointer-events-none"> <div class="tradingview-widget-container__widget"></div>
                     <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-market-overview.js" async>
                     { "colorTheme": "light", "dateRange": "12M", "showChart": true, "locale": "zh_CN", "width": "100%", "height": "100%", "isTransparent": true,
                       "tabs": [ { "title": "全球指数", "symbols": [ { "s": "NASDAQ:NDX", "d": "纳斯达克" }, { "s": "S&P:SPX", "d": "标普500" }, { "s": "TVC:NI225", "d": "日经225" }, { "s": "TVC:UKX", "d": "富时100" } ] } ] }
@@ -131,7 +134,7 @@
                 </div>
             </div>
 
-            <div id="widget-news" class="ios-glass p-6 flex flex-col h-[400px]">
+            <div data-id="news" id="widget-news" class="ios-glass p-6 flex flex-col h-[400px]">
                 <div class="flex justify-between items-center mb-4 border-b border-white/10 pb-2">
                     <h3 class="ios-header mb-0 text-[var(--ios-blue)]">热点资讯</h3>
                     <span id="newsSourceLabel" class="text-[10px] bg-white/10 px-2 py-1 rounded text-white/70">百度</span>
@@ -139,7 +142,7 @@
                 <div id="newsList" class="space-y-3 overflow-y-auto scroll-hide flex-1 pr-1 text-sm"></div>
             </div>
 
-            <div id="widget-hub" class="ios-glass p-5 h-[400px] flex flex-col">
+            <div data-id="hub" id="widget-hub" class="ios-glass p-5 h-[400px] flex flex-col">
                 <div class="flex bg-[rgba(118,118,128,0.24)] p-1 rounded-lg mb-4">
                     <div class="tab-btn active" onclick="switchTab('note')">笔记</div>
                     <div class="tab-btn" onclick="switchTab('todo')">待办</div>
@@ -192,25 +195,50 @@
             searchEngine: 'google', widgets: { stock: true, news: true, hub: true },
             newsSource: 'baidu', bgMode: 'random', bgUrl: '', bgList: [], bgInterval: 30, city: 'Shanghai',
             shortcuts: [ { name: 'GitHub', url: 'https://github.com' }, { name: 'ChatGPT', url: 'https://chat.openai.com' } ],
-            todos: [] 
+            todos: [],
+            widgetOrder: ['stock', 'news', 'hub'] // 默认顺序
         };
         const engines = { google: "https://www.google.com/search?q=", baidu: "https://www.baidu.com/s?wd=", bing: "https://www.bing.com/search?q=" };
         let timerInterval = null, timeLeft = 25 * 60, isTimerRunning = false;
 
         function init() {
-            const saved = localStorage.getItem('idash_cn_bing');
+            const saved = localStorage.getItem('idash_drag_v1');
             if (saved) {
                 const parsed = JSON.parse(saved);
                 config = { ...config, ...parsed, widgets: { ...config.widgets, ...(parsed.widgets || {}) }, todos: parsed.todos || [] };
             }
+            
+            // --- 拖拽初始化 ---
+            const grid = document.getElementById('widgetGrid');
+            new Sortable(grid, {
+                animation: 200, // 动画速度
+                ghostClass: 'sortable-ghost', // 拖拽时的阴影样式
+                handle: '.ios-glass', // 整个卡片都可拖拽
+                draggable: '[data-id]', // 只允许拖拽带有 data-id 的元素
+                onEnd: function (evt) {
+                    // 拖拽结束，保存顺序
+                    const order = Array.from(grid.children).map(el => el.getAttribute('data-id')).filter(id => id);
+                    config.widgetOrder = order;
+                    saveConfigOnly(); // 仅保存配置，不刷新
+                }
+            });
+
+            // 根据保存的顺序重新排列 DOM
+            if (config.widgetOrder && config.widgetOrder.length > 0) {
+                config.widgetOrder.forEach(id => {
+                    const el = grid.querySelector(`[data-id="${id}"]`);
+                    if (el) grid.appendChild(el);
+                });
+            }
+
             applyUI();
             startServices();
             renderShortcutsEdit();
             renderTodos();
             
             const note = document.getElementById('noteArea');
-            note.value = localStorage.getItem('idash_note_cn') || '';
-            note.addEventListener('input', e => localStorage.setItem('idash_note_cn', e.target.value));
+            note.value = localStorage.getItem('idash_note_drag') || '';
+            note.addEventListener('input', e => localStorage.setItem('idash_note_drag', e.target.value));
 
             document.getElementById('searchInput').addEventListener('keydown', (e) => {
                 if(e.key==='Enter' && e.target.value.trim()) {
@@ -268,10 +296,14 @@
                 </div>
             `).join('');
         }
-        function addTodo() { const t = document.getElementById('todoInput').value.trim(); if(t) { config.todos.push({text:t, done:false}); document.getElementById('todoInput').value=''; saveTodos(); } }
-        function toggleTodo(i) { config.todos[i].done = !config.todos[i].done; saveTodos(); }
-        function deleteTodo(i) { config.todos.splice(i, 1); saveTodos(); }
-        function saveTodos() { renderTodos(); const s = localStorage.getItem('idash_cn_bing'); let d = s ? JSON.parse(s) : {}; d.todos = config.todos; localStorage.setItem('idash_cn_bing', JSON.stringify(d)); }
+        function addTodo() { const t = document.getElementById('todoInput').value.trim(); if(t) { config.todos.push({text:t, done:false}); document.getElementById('todoInput').value=''; saveConfigOnly(); renderTodos(); } }
+        function toggleTodo(i) { config.todos[i].done = !config.todos[i].done; saveConfigOnly(); renderTodos(); }
+        function deleteTodo(i) { config.todos.splice(i, 1); saveConfigOnly(); renderTodos(); }
+        
+        // 独立保存函数，不刷新页面
+        function saveConfigOnly() {
+            localStorage.setItem('idash_drag_v1', JSON.stringify(config));
+        }
 
         function toggleTimer() {
             const btn = document.getElementById('timerBtn'); const st = document.getElementById('timerStatus');
@@ -295,7 +327,8 @@
             config.bgInterval = parseInt(document.getElementById('bgInterval').value) || 30;
             const uv = document.getElementById('bgUrlInput').value;
             if (config.bgMode === 'list') config.bgList = uv.split('\n').filter(l => l.trim()); else config.bgUrl = uv;
-            localStorage.setItem('idash_cn_bing', JSON.stringify(config)); location.reload();
+            saveConfigOnly();
+            location.reload();
         }
 
         function startServices() {
