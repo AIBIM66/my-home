@@ -10,6 +10,7 @@
         :root {
             --ios-blue: #007AFF;
             --ios-green: #34C759;
+            --ios-red: #FF3B30;
             --ios-bg-glass: rgba(30, 30, 30, 0.60);
             --ios-border: rgba(255, 255, 255, 0.12);
             --ios-text-primary: rgba(255, 255, 255, 0.95);
@@ -18,80 +19,69 @@
         }
 
         body { 
-            margin: 0; 
-            font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif; 
-            overflow: hidden; 
-            background: #000; 
-            color: var(--ios-text-primary); 
-            -webkit-font-smoothing: antialiased;
+            margin: 0; font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif; 
+            overflow: hidden; background: #000; color: var(--ios-text-primary); -webkit-font-smoothing: antialiased;
         }
         
+        /* 背景层：已优化加载速度 */
         .bg-layer { position: fixed; inset: 0; z-index: -1; background-size: cover; background-position: center; transition: background 1.2s cubic-bezier(0.4, 0, 0.2, 1); }
         
-        /* 核心：iOS 毛玻璃材质 */
+        /* 毛玻璃容器 */
         .ios-glass {
             background: var(--ios-bg-glass);
-            backdrop-filter: blur(40px) saturate(160%);
-            -webkit-backdrop-filter: blur(40px) saturate(160%);
-            border: 1px solid var(--ios-border);
-            border-radius: 24px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(40px) saturate(160%); -webkit-backdrop-filter: blur(40px) saturate(160%);
+            border: 1px solid var(--ios-border); border-radius: 24px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3); transition: transform 0.2s;
         }
 
-        /* 搜索框专用样式 */
+        /* 搜索框 */
         .ios-search-bar {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            border-radius: 50px;
-            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 50px;
+            transition: all 0.3s;
         }
-        .ios-search-bar:focus-within {
-            background: rgba(255, 255, 255, 0.15);
-            border-color: var(--ios-blue);
-            box-shadow: 0 0 0 4px rgba(0, 122, 255, 0.15);
-            transform: scale(1.02);
-        }
-        .search-input {
-            background: transparent; border: none; outline: none; color: white; width: 100%; font-size: 16px; height: 100%;
-        }
-        .search-input::placeholder { color: rgba(255, 255, 255, 0.5); }
-
-        /* 胶囊玻璃 (天气) */
-        .ios-glass-pill {
-            background: rgba(40, 40, 40, 0.4);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 50px;
-        }
-
-        /* 标题样式 */
-        .ios-header {
-            font-size: 12px; font-weight: 600; opacity: 0.7; margin-bottom: 12px;
-            display: flex; align-items: center; gap: 6px;
-        }
-
-        /* 基础组件 */
+        .ios-search-bar:focus-within { background: rgba(255, 255, 255, 0.15); border-color: var(--ios-blue); box-shadow: 0 0 0 4px rgba(0, 122, 255, 0.15); }
+        .search-input { background: transparent; border: none; outline: none; color: white; width: 100%; font-size: 16px; height: 100%; }
+        
+        /* 通用组件 */
+        .ios-header { font-size: 12px; font-weight: 600; opacity: 0.7; margin-bottom: 12px; display: flex; align-items: center; gap: 6px; text-transform: uppercase; letter-spacing: 0.05em; }
         .ios-input { background: var(--ios-input-bg); border: none; padding: 12px 16px; border-radius: 12px; width: 100%; color: white; outline: none; font-size: 14px; }
-        .ios-btn { background: var(--ios-blue); color: white; font-weight: 500; font-size: 14px; padding: 10px 16px; border-radius: 12px; cursor: pointer; }
+        .ios-btn { background: var(--ios-blue); color: white; font-weight: 500; font-size: 14px; padding: 8px 16px; border-radius: 10px; cursor: pointer; transition: opacity 0.2s; }
+        .ios-btn:active { opacity: 0.7; }
         .ios-btn-secondary { background: rgba(255,255,255,0.1); color: white; backdrop-filter: blur(10px); }
-
+        
         /* 快捷图标 */
         .shortcut-item {
             background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.05); border-radius: 18px;
             padding: 10px 20px; font-size: 14px; font-weight: 500; transition: all 0.3s;
-            display: flex; align-items: center; gap: 10px; color: rgba(255,255,255,0.9);
+            display: flex; align-items: center; gap: 10px; color: rgba(255,255,255,0.9); cursor: pointer; text-decoration: none;
         }
         .shortcut-item:hover { background: rgba(255,255,255,0.15); transform: translateY(-2px); }
-        .shortcut-icon { width: 20px; height: 20px; background: var(--ios-blue); border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 10px; }
+        .shortcut-icon { width: 20px; height: 20px; background: var(--ios-blue); border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 10px; color: white; }
 
-        /* Switch */
+        /* Switch 开关 */
         .ios-switch { position: relative; display: inline-block; width: 44px; height: 24px; }
         .ios-switch input { opacity: 0; width: 0; height: 0; }
         .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(120,120,128,0.32); transition: .4s; border-radius: 24px; }
         .slider:before { position: absolute; content: ""; height: 20px; width: 20px; left: 2px; bottom: 2px; background-color: white; transition: .4s; border-radius: 50%; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
         input:checked + .slider { background-color: var(--ios-green); }
         input:checked + .slider:before { transform: translateX(20px); }
+
+        /* --- 效率中心样式 --- */
+        .tab-btn { flex: 1; text-align: center; padding: 8px; font-size: 13px; font-weight: 500; color: var(--ios-text-secondary); cursor: pointer; border-radius: 8px; transition: all 0.2s; }
+        .tab-btn.active { background: rgba(99, 99, 102, 0.4); color: white; font-weight: 600; }
+        
+        .todo-item { display: flex; align-items: center; gap: 10px; padding: 10px; background: rgba(255,255,255,0.05); border-radius: 10px; margin-bottom: 8px; transition: all 0.2s; }
+        .todo-checkbox { width: 20px; height: 20px; border: 2px solid var(--ios-text-secondary); border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+        .todo-item.done .todo-checkbox { background: var(--ios-green); border-color: var(--ios-green); }
+        .todo-item.done .todo-text { text-decoration: line-through; opacity: 0.4; }
+        .todo-text { flex: 1; font-size: 14px; }
+        .delete-btn { opacity: 0; color: var(--ios-text-secondary); transition: opacity 0.2s; cursor: pointer; }
+        .todo-item:hover .delete-btn { opacity: 1; }
+
+        .timer-circle { width: 180px; height: 180px; border-radius: 50%; border: 4px solid rgba(255,255,255,0.1); margin: 20px auto; display: flex; align-items: center; justify-content: center; position: relative; }
+        .timer-time { font-size: 48px; font-weight: 200; font-variant-numeric: tabular-nums; }
+        .timer-status { position: absolute; bottom: 30px; font-size: 12px; opacity: 0.6; text-transform: uppercase; letter-spacing: 2px; }
 
         .scroll-hide::-webkit-scrollbar { display: none; }
         .tv-widget { filter: invert(1) hue-rotate(180deg) contrast(0.85) brightness(1.1); mix-blend-mode: screen; opacity: 0.9; }
@@ -100,42 +90,39 @@
 </head>
 <body>
 
-    <div id="mainBg" class="bg-layer" style="background-image: url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2564');"></div>
+    <div id="mainBg" class="bg-layer" style="background-image: url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=60&w=1280&auto=format');"></div>
 
     <div class="relative h-screen w-full flex flex-col p-6 md:p-10 overflow-y-auto scroll-hide items-center">
         
         <div class="flex flex-col items-center justify-center mt-6 mb-8 w-full max-w-2xl text-center z-10">
-            
-            <p id="date" class="text-lg font-medium tracking-wide text-[var(--ios-text-secondary)] mb-1 uppercase">载入日期...</p>
+            <p id="date" class="text-lg font-medium tracking-wide text-[var(--ios-text-secondary)] mb-1 uppercase">Loading...</p>
             <h1 id="clock" class="text-8xl md:text-9xl font-bold tracking-tighter leading-none clock-font drop-shadow-2xl mb-6">00:00</h1>
             
-            <div class="ios-glass-pill px-6 py-2 flex items-center gap-4 cursor-default hover:bg-white/10 transition mb-8">
-                <div class="flex items-center gap-2">
+            <div class="flex flex-col items-center gap-3 mb-8">
+                <div class="bg-white/10 backdrop-blur-md border border-white/10 rounded-full px-5 py-1.5 flex items-center gap-3 cursor-default transition hover:bg-white/20">
                     <span id="weatherDesc" class="text-sm font-medium">--</span>
                     <span class="w-[1px] h-3 bg-white/20"></span>
                     <span id="tempText" class="text-sm font-bold">--</span>
                     <span class="text-xs opacity-60">°C</span>
+                    <span class="w-[1px] h-3 bg-white/20"></span>
+                    <span id="cityText" class="text-xs uppercase tracking-wider opacity-70">LOCATING</span>
                 </div>
-                <div class="flex items-center gap-1 opacity-50">
-                    <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"></path></svg>
-                    <span id="cityText" class="text-xs uppercase tracking-wider">定位中</span>
-                </div>
+                <p id="dailyQuote" class="text-xs text-white/60 italic max-w-md px-4 truncate">"Stay hungry, stay foolish."</p>
             </div>
 
             <div class="w-full max-w-lg relative group">
                 <div class="ios-search-bar flex items-center px-4 py-3">
                     <svg class="w-5 h-5 text-white/50 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                    <input type="text" id="searchInput" class="search-input" placeholder="搜索..." autocomplete="off">
+                    <input type="text" id="searchInput" class="search-input" placeholder="Search..." autocomplete="off">
                 </div>
             </div>
-
         </div>
 
-        <div id="shortcutsDisplay" class="flex flex-wrap justify-center gap-3 mb-10 w-full max-w-4xl"></div>
+        <div id="shortcutsDisplay" class="flex flex-wrap justify-center gap-3 mb-8 w-full max-w-4xl"></div>
 
         <div id="widgetGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-[1600px] w-full flex-1 mb-6">
             
-            <div id="widget-stock" class="lg:col-span-2 ios-glass p-1 flex flex-col h-[380px] overflow-hidden relative">
+            <div id="widget-stock" class="lg:col-span-2 ios-glass p-1 flex flex-col h-[400px] overflow-hidden relative">
                 <div class="tradingview-widget-container w-full h-full tv-widget">
                     <div class="tradingview-widget-container__widget"></div>
                     <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-market-overview.js" async>
@@ -145,7 +132,7 @@
                 </div>
             </div>
 
-            <div id="widget-news" class="ios-glass p-6 flex flex-col h-[380px]">
+            <div id="widget-news" class="ios-glass p-6 flex flex-col h-[400px]">
                 <div class="flex justify-between items-center mb-4 border-b border-white/10 pb-2">
                     <h3 class="ios-header mb-0 text-[var(--ios-blue)]">热点资讯</h3>
                     <span id="newsSourceLabel" class="text-[10px] bg-white/10 px-2 py-1 rounded text-white/70">百度</span>
@@ -153,12 +140,31 @@
                 <div id="newsList" class="space-y-3 overflow-y-auto scroll-hide flex-1 pr-1 text-sm"></div>
             </div>
 
-            <div id="widget-note" class="ios-glass p-6 h-[380px] flex flex-col">
-                <h3 class="ios-header mb-3">随手记</h3>
-                <textarea id="noteArea" class="w-full flex-1 bg-[rgba(255,255,255,0.05)] rounded-xl border-none outline-none text-[15px] leading-relaxed placeholder:text-[var(--ios-text-secondary)] mb-4 p-4 resize-none" placeholder="记录想法..."></textarea>
-                <div class="grid grid-cols-2 gap-3 mt-auto">
-                    <button onclick="window.open('https://mail.google.com')" class="ios-btn ios-btn-secondary flex items-center justify-center gap-2 text-xs py-3">Gmail</button>
-                    <button onclick="window.open('https://outlook.com')" class="ios-btn ios-btn-secondary flex items-center justify-center gap-2 text-xs py-3">Outlook</button>
+            <div id="widget-hub" class="ios-glass p-5 h-[400px] flex flex-col">
+                <div class="flex bg-[rgba(118,118,128,0.24)] p-1 rounded-lg mb-4">
+                    <div class="tab-btn active" onclick="switchTab('note')">笔记</div>
+                    <div class="tab-btn" onclick="switchTab('todo')">待办</div>
+                    <div class="tab-btn" onclick="switchTab('timer')">专注</div>
+                </div>
+                <div id="tab-note" class="flex-1 flex flex-col h-full">
+                    <textarea id="noteArea" class="w-full flex-1 bg-transparent border-none outline-none text-[15px] leading-relaxed placeholder:text-[var(--ios-text-secondary)] resize-none" placeholder="随手记..."></textarea>
+                </div>
+                <div id="tab-todo" class="flex-1 flex flex-col h-full hidden">
+                    <div class="flex gap-2 mb-3">
+                        <input id="todoInput" type="text" class="ios-input py-2 text-sm" placeholder="添加新任务..." onkeypress="if(event.key==='Enter') addTodo()">
+                        <button onclick="addTodo()" class="bg-white/10 hover:bg-white/20 rounded-lg px-3 text-lg">+</button>
+                    </div>
+                    <div id="todoList" class="flex-1 overflow-y-auto scroll-hide"></div>
+                </div>
+                <div id="tab-timer" class="flex-1 flex flex-col items-center justify-center hidden">
+                    <div class="timer-circle">
+                        <span id="timerDisplay" class="timer-time">25:00</span>
+                        <span id="timerStatus" class="timer-status">FOCUS</span>
+                    </div>
+                    <div class="flex gap-4 mt-2">
+                        <button onclick="toggleTimer()" id="timerBtn" class="ios-btn px-6">开始</button>
+                        <button onclick="resetTimer()" class="ios-btn bg-white/10 hover:bg-white/20">重置</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -175,234 +181,152 @@
         </div>
 
         <div class="space-y-8">
-            <section>
-                <h3 class="ios-header text-[var(--ios-blue)]">搜索引擎</h3>
-                <div class="relative">
-                    <select id="searchEngineSelect" class="ios-input appearance-none">
-                        <option value="google">Google</option>
-                        <option value="baidu">百度 (Baidu)</option>
-                        <option value="bing">必应 (Bing)</option>
-                        <option value="duckduckgo">DuckDuckGo</option>
-                    </select>
-                    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-white/50">▼</div>
-                </div>
-            </section>
-
-            <section>
-                <h3 class="ios-header">城市定位</h3>
-                <input id="cityInput" type="text" class="ios-input" placeholder="输入城市拼音 (如: Shanghai)">
-            </section>
-
-            <section>
-                <h3 class="ios-header">功能显示</h3>
-                <div class="bg-[var(--ios-input-bg)] rounded-xl p-4 space-y-4">
-                    <div class="flex justify-between items-center"><span class="text-sm font-medium">股市行情</span><label class="ios-switch"><input type="checkbox" id="check-stock"><span class="slider"></span></label></div>
-                    <div class="flex justify-between items-center border-t border-white/5 pt-4"><span class="text-sm font-medium">新闻热榜</span><label class="ios-switch"><input type="checkbox" id="check-news"><span class="slider"></span></label></div>
-                    <div class="flex justify-between items-center border-t border-white/5 pt-4"><span class="text-sm font-medium">备忘录与邮件</span><label class="ios-switch"><input type="checkbox" id="check-note"><span class="slider"></span></label></div>
-                </div>
-            </section>
-
-            <section>
-                 <h3 class="ios-header">个性化</h3>
-                 <div class="space-y-4">
-                    <div>
-                        <label class="text-xs text-[var(--ios-text-secondary)] mb-2 block">新闻来源</label>
-                        <select id="newsSourceSelect" class="ios-input appearance-none">
-                            <option value="baidu">百度热搜</option>
-                            <option value="weibo">微博热搜</option>
-                            <option value="zhihu">知乎热榜</option>
-                            <option value="tech">科技前沿</option>
-                        </select>
-                    </div>
-                    <div>
-                         <label class="text-xs text-[var(--ios-text-secondary)] mb-2 block">壁纸模式</label>
-                        <select id="bgMode" class="ios-input appearance-none">
-                            <option value="random">自动随机 (Unsplash)</option>
-                            <option value="fixed">固定图片</option>
-                            <option value="list">自定义轮播列表</option>
-                        </select>
-                    </div>
-                    <textarea id="bgUrlInput" class="ios-input h-20" placeholder="输入图片 URL (每行一个)..."></textarea>
-                    <div class="flex items-center justify-between bg-[var(--ios-input-bg)] p-3 rounded-xl">
-                        <span class="text-xs text-[var(--ios-text-secondary)]">轮播间隔 (分钟)</span>
-                        <input id="bgInterval" type="number" class="ios-input w-16 text-center p-1 bg-white/10" value="30">
-                    </div>
-                 </div>
-            </section>
-
-            <section>
-                <h3 class="ios-header">快捷导航</h3>
-                <div id="shortcutList" class="space-y-2 mb-3 max-h-32 overflow-y-auto bg-[var(--ios-input-bg)] rounded-xl p-2"></div>
-                <div class="flex gap-2">
-                    <input id="newSiteName" type="text" placeholder="名称" class="ios-input w-1/3">
-                    <input id="newSiteUrl" type="text" placeholder="网址 https://..." class="ios-input w-2/3">
-                </div>
-                <button onclick="addShortcut()" class="ios-btn ios-btn-secondary w-full mt-3">添加站点</button>
-            </section>
-
+            <section><h3 class="ios-header text-[var(--ios-blue)]">搜索引擎</h3><div class="relative"><select id="searchEngineSelect" class="ios-input appearance-none"><option value="google">Google</option><option value="baidu">百度</option><option value="bing">Bing</option></select><div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-white/50">▼</div></div></section>
+            <section><h3 class="ios-header">城市定位</h3><input id="cityInput" type="text" class="ios-input" placeholder="输入城市拼音 (如: Shanghai)"></section>
+            <section><h3 class="ios-header">功能显示</h3><div class="bg-[var(--ios-input-bg)] rounded-xl p-4 space-y-4">
+                <div class="flex justify-between items-center"><span class="text-sm font-medium">股市行情</span><label class="ios-switch"><input type="checkbox" id="check-stock"><span class="slider"></span></label></div>
+                <div class="flex justify-between items-center border-t border-white/5 pt-4"><span class="text-sm font-medium">新闻热榜</span><label class="ios-switch"><input type="checkbox" id="check-news"><span class="slider"></span></label></div>
+                <div class="flex justify-between items-center border-t border-white/5 pt-4"><span class="text-sm font-medium">效率中心</span><label class="ios-switch"><input type="checkbox" id="check-hub"><span class="slider"></span></label></div>
+            </div></section>
+            <section><h3 class="ios-header">个性化</h3><div class="space-y-4"><div><label class="text-xs text-[var(--ios-text-secondary)] mb-2 block">新闻来源</label><select id="newsSourceSelect" class="ios-input appearance-none"><option value="baidu">百度热搜</option><option value="weibo">微博热搜</option><option value="zhihu">知乎热榜</option><option value="tech">科技前沿</option></select></div><div><label class="text-xs text-[var(--ios-text-secondary)] mb-2 block">壁纸模式</label><select id="bgMode" class="ios-input appearance-none"><option value="random">自动随机 (Unsplash)</option><option value="fixed">固定图片</option><option value="list">自定义轮播列表</option></select></div><textarea id="bgUrlInput" class="ios-input h-20" placeholder="输入图片 URL (每行一个)..."></textarea><div class="flex items-center justify-between bg-[var(--ios-input-bg)] p-3 rounded-xl"><span class="text-xs text-[var(--ios-text-secondary)]">轮播间隔 (分钟)</span><input id="bgInterval" type="number" class="ios-input w-16 text-center p-1 bg-white/10" value="30"></div></div></section>
+            <section><h3 class="ios-header">快捷导航</h3><div id="shortcutList" class="space-y-2 mb-3 max-h-32 overflow-y-auto bg-[var(--ios-input-bg)] rounded-xl p-2"></div><div class="flex gap-2"><input id="newSiteName" type="text" placeholder="名称" class="ios-input w-1/3"><input id="newSiteUrl" type="text" placeholder="网址" class="ios-input w-2/3"></div><button onclick="addShortcut()" class="ios-btn ios-btn-secondary w-full mt-3">添加站点</button></section>
             <button onclick="saveAll()" class="ios-btn w-full mt-6 shadow-lg shadow-blue-500/30">保存并应用</button>
         </div>
     </div>
 
     <script>
         let config = {
-            searchEngine: 'google', // 默认搜索引擎
-            widgets: { stock: true, news: true, note: true },
-            newsSource: 'baidu',
-            bgMode: 'random',
-            bgUrl: '',
-            bgList: [],
-            bgInterval: 30,
-            city: 'Shanghai',
-            shortcuts: [ { name: 'GitHub', url: 'https://github.com' }, { name: 'Bilibili', url: 'https://bilibili.com' }, { name: 'ChatGPT', url: 'https://chat.openai.com' } ]
+            searchEngine: 'google', widgets: { stock: true, news: true, hub: true },
+            newsSource: 'baidu', bgMode: 'random', bgUrl: '', bgList: [], bgInterval: 30, city: 'Shanghai',
+            shortcuts: [ { name: 'GitHub', url: 'https://github.com' }, { name: 'ChatGPT', url: 'https://chat.openai.com' } ],
+            todos: [] 
         };
-
-        const engines = {
-            google: "https://www.google.com/search?q=",
-            baidu: "https://www.baidu.com/s?wd=",
-            bing: "https://www.bing.com/search?q=",
-            duckduckgo: "https://duckduckgo.com/?q="
-        };
+        const engines = { google: "https://www.google.com/search?q=", baidu: "https://www.baidu.com/s?wd=", bing: "https://www.bing.com/search?q=" };
+        let timerInterval = null, timeLeft = 25 * 60, isTimerRunning = false;
 
         function init() {
-            const saved = localStorage.getItem('idash_cn_v4_search');
+            const saved = localStorage.getItem('idash_fast_v2');
             if (saved) {
                 const parsed = JSON.parse(saved);
-                config = { ...config, ...parsed, widgets: { ...config.widgets, ...(parsed.widgets || {}) } };
+                config = { ...config, ...parsed, widgets: { ...config.widgets, ...(parsed.widgets || {}) }, todos: parsed.todos || [] };
             }
             applyUI();
             startServices();
             renderShortcutsEdit();
+            renderTodos();
             
-            // 搜索功能初始化
-            const searchInput = document.getElementById('searchInput');
-            searchInput.addEventListener('keydown', (e) => {
-                if (e.key === 'Enter') {
-                    const query = searchInput.value.trim();
-                    if (query) {
-                        const baseUrl = engines[config.searchEngine] || engines.google;
-                        window.open(baseUrl + encodeURIComponent(query), '_blank');
-                        searchInput.value = '';
-                    }
+            const note = document.getElementById('noteArea');
+            note.value = localStorage.getItem('idash_note_fast') || '';
+            note.addEventListener('input', e => localStorage.setItem('idash_note_fast', e.target.value));
+
+            document.getElementById('searchInput').addEventListener('keydown', (e) => {
+                if(e.key==='Enter' && e.target.value.trim()) {
+                    window.open((engines[config.searchEngine]||engines.google) + encodeURIComponent(e.target.value), '_blank');
+                    e.target.value='';
                 }
             });
-
-            // 笔记初始化
-            const note = document.getElementById('noteArea');
-            note.value = localStorage.getItem('idash_note_cn') || '';
-            note.addEventListener('input', e => localStorage.setItem('idash_note_cn', e.target.value));
+            const quotes = ["Stay hungry, stay foolish.", "Simplicity is the ultimate sophistication.", "Done is better than perfect."];
+            document.getElementById('dailyQuote').innerText = quotes[Math.floor(Math.random() * quotes.length)];
         }
 
         function applyUI() {
             document.getElementById('cityInput').value = config.city;
             document.getElementById('check-stock').checked = config.widgets.stock;
             document.getElementById('check-news').checked = config.widgets.news;
-            document.getElementById('check-note').checked = config.widgets.note;
+            document.getElementById('check-hub').checked = config.widgets.hub;
             document.getElementById('newsSourceSelect').value = config.newsSource;
             document.getElementById('bgMode').value = config.bgMode;
             document.getElementById('bgInterval').value = config.bgInterval;
             document.getElementById('bgUrlInput').value = config.bgMode === 'list' ? config.bgList.join('\n') : config.bgUrl;
-            
-            // 搜索设置回显
             document.getElementById('searchEngineSelect').value = config.searchEngine;
-            // 更新 placeholder
-            const engineNames = { google: 'Google', baidu: '百度', bing: 'Bing', duckduckgo: 'DuckDuckGo' };
+            
+            const engineNames = { google: 'Google', baidu: '百度', bing: 'Bing' };
             document.getElementById('searchInput').placeholder = `在 ${engineNames[config.searchEngine]} 上搜索...`;
-
             document.getElementById('widget-stock').style.display = config.widgets.stock ? 'flex' : 'none';
             document.getElementById('widget-news').style.display = config.widgets.news ? 'flex' : 'none';
-            document.getElementById('widget-note').style.display = config.widgets.note ? 'flex' : 'none';
-
+            document.getElementById('widget-hub').style.display = config.widgets.hub ? 'flex' : 'none';
             const sourceNames = { 'baidu': '百度', 'weibo': '微博', 'zhihu': '知乎', 'tech': '科技' };
             document.getElementById('newsSourceLabel').innerText = sourceNames[config.newsSource] || '热点';
-
             document.getElementById('shortcutsDisplay').innerHTML = config.shortcuts.map(s => `
-                <a href="${s.url}" target="_blank" class="shortcut-item">
-                    <div class="shortcut-icon">➜</div>${s.name}
-                </a>
+                <a href="${s.url}" target="_blank" class="shortcut-item"><div class="shortcut-icon">➜</div>${s.name}</a>
             `).join('');
-
             renderNews();
             updateBackground();
         }
+
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('#widget-hub > div[id^="tab-"]').forEach(d => d.classList.add('hidden'));
+            const buttons = document.querySelectorAll('.tab-btn');
+            if(tabName === 'note') buttons[0].classList.add('active');
+            if(tabName === 'todo') buttons[1].classList.add('active');
+            if(tabName === 'timer') buttons[2].classList.add('active');
+            document.getElementById(`tab-${tabName}`).classList.remove('hidden');
+        }
+
+        function renderTodos() {
+            const list = document.getElementById('todoList');
+            if (config.todos.length === 0) { list.innerHTML = '<div class="text-center opacity-30 text-sm mt-10">暂无待办事项</div>'; return; }
+            list.innerHTML = config.todos.map((t, i) => `
+                <div class="todo-item ${t.done ? 'done' : ''}">
+                    <div class="todo-checkbox" onclick="toggleTodo(${i})">${t.done ? '✓' : ''}</div>
+                    <span class="todo-text">${t.text}</span>
+                    <span class="delete-btn" onclick="deleteTodo(${i})">✕</span>
+                </div>
+            `).join('');
+        }
+        function addTodo() { const t = document.getElementById('todoInput').value.trim(); if(t) { config.todos.push({text:t, done:false}); document.getElementById('todoInput').value=''; saveTodos(); } }
+        function toggleTodo(i) { config.todos[i].done = !config.todos[i].done; saveTodos(); }
+        function deleteTodo(i) { config.todos.splice(i, 1); saveTodos(); }
+        function saveTodos() { renderTodos(); const s = localStorage.getItem('idash_fast_v2'); let d = s ? JSON.parse(s) : {}; d.todos = config.todos; localStorage.setItem('idash_fast_v2', JSON.stringify(d)); }
+
+        function toggleTimer() {
+            const btn = document.getElementById('timerBtn'); const st = document.getElementById('timerStatus');
+            if (isTimerRunning) { clearInterval(timerInterval); isTimerRunning = false; btn.innerText="继续"; st.innerText="PAUSED"; st.style.color="white"; }
+            else {
+                isTimerRunning = true; btn.innerText="暂停"; st.innerText="FOCUSING"; st.style.color="var(--ios-green)";
+                timerInterval = setInterval(() => { if(timeLeft>0) { timeLeft--; updateTimerDisplay(); } else { clearInterval(timerInterval); isTimerRunning=false; btn.innerText="完成"; st.innerText="DONE"; } }, 1000);
+            }
+        }
+        function resetTimer() { clearInterval(timerInterval); isTimerRunning=false; timeLeft=25*60; updateTimerDisplay(); document.getElementById('timerBtn').innerText="开始"; document.getElementById('timerStatus').innerText="READY"; document.getElementById('timerStatus').style.color="white"; }
+        function updateTimerDisplay() { const m=Math.floor(timeLeft/60).toString().padStart(2,'0'); const s=(timeLeft%60).toString().padStart(2,'0'); document.getElementById('timerDisplay').innerText=`${m}:${s}`; }
 
         function saveAll() {
             config.city = document.getElementById('cityInput').value || 'Shanghai';
             config.widgets.stock = document.getElementById('check-stock').checked;
             config.widgets.news = document.getElementById('check-news').checked;
-            config.widgets.note = document.getElementById('check-note').checked;
+            config.widgets.hub = document.getElementById('check-hub').checked;
             config.newsSource = document.getElementById('newsSourceSelect').value;
-            config.searchEngine = document.getElementById('searchEngineSelect').value; // 保存搜索引擎
+            config.searchEngine = document.getElementById('searchEngineSelect').value;
             config.bgMode = document.getElementById('bgMode').value;
             config.bgInterval = parseInt(document.getElementById('bgInterval').value) || 30;
             const uv = document.getElementById('bgUrlInput').value;
-            if (config.bgMode === 'list') config.bgList = uv.split('\n').filter(l => l.trim());
-            else config.bgUrl = uv;
-            
-            localStorage.setItem('idash_cn_v4_search', JSON.stringify(config));
-            location.reload();
+            if (config.bgMode === 'list') config.bgList = uv.split('\n').filter(l => l.trim()); else config.bgUrl = uv;
+            localStorage.setItem('idash_fast_v2', JSON.stringify(config)); location.reload();
         }
 
         function startServices() {
-            const fetchWeather = () => {
-                fetch(`https://wttr.in/${config.city}?format=%c+%t+%C`)
-                    .then(r => r.text()).then(t => {
-                        const p = t.split(' ');
-                        const temp = p[1] ? p[1].replace('+','').replace('°C','').replace('C','') : '--';
-                        document.getElementById('cityText').innerText = config.city;
-                        document.getElementById('tempText').innerText = temp;
-                        document.getElementById('weatherDesc').innerText = p.slice(2).join(' ') || '晴';
-                    })
-                    .catch(() => { document.getElementById('weatherDesc').innerText = '离线'; });
-            };
-            fetchWeather(); setInterval(fetchWeather, 30*60000);
-
-            setInterval(() => {
-                const now = new Date();
-                const weekDays = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
-                document.getElementById('clock').innerText = now.toLocaleTimeString('zh-CN', { hour12: false, hour: '2-digit', minute: '2-digit' });
-                document.getElementById('date').innerText = `${now.getMonth() + 1}月${now.getDate()}日 ${weekDays[now.getDay()]}`;
-            }, 1000);
-
+            const fetchWeather = () => { fetch(`https://wttr.in/${config.city}?format=%c+%t+%C`).then(r=>r.text()).then(t=>{ const p=t.split(' '); document.getElementById('cityText').innerText=config.city; document.getElementById('tempText').innerText=p[1]?p[1].replace('+','').replace('°C','').replace('C',''):'--'; document.getElementById('weatherDesc').innerText=p.slice(2).join(' ')||'晴'; }).catch(()=>{}); };
+            fetchWeather(); setInterval(fetchWeather, 1800000);
+            setInterval(() => { const now=new Date(); document.getElementById('clock').innerText=now.toLocaleTimeString('zh-CN',{hour12:false,hour:'2-digit',minute:'2-digit'}); document.getElementById('date').innerText=`${now.getMonth()+1}月${now.getDate()}日 星期${"日一二三四五六"[now.getDay()]}`; }, 1000);
             if (config.bgInterval > 0) setInterval(updateBackground, config.bgInterval * 60000);
         }
 
         function updateBackground() {
             let url = '';
             if (config.bgMode === 'fixed') url = config.bgUrl;
-            else if (config.bgMode === 'random') url = `https://source.unsplash.com/featured/2560x1440?abstract,minimal,nature&t=${new Date().getTime()}`;
-            if (config.bgMode === 'list' && config.bgList.length > 0) {
-                config.lastBgIndex = (config.lastBgIndex + 1) % config.bgList.length;
-                url = config.bgList[config.lastBgIndex];
-            }
+            else if (config.bgMode === 'random') url = `https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=60&w=1280&auto=format`;
+            if (config.bgMode === 'list' && config.bgList.length > 0) { config.lastBgIndex = (config.lastBgIndex + 1) % config.bgList.length; url = config.bgList[config.lastBgIndex]; }
             if (url) { const img = new Image(); img.src = url; img.onload = () => document.getElementById('mainBg').style.backgroundImage = `url('${url}')`; }
         }
 
         function renderNews() {
             const list = document.getElementById('newsList');
-            const sourceMap = {
-                'baidu': ["国产大模型全面开放公测", "2025年放假安排正式公布", "全球股市迎来技术性牛市", "新一代固态电池量产时间表", "人工智能立法草案征求意见"],
-                'weibo': ["#周五快乐# 爆", "#新iOS功能# 沸", "年度十大流行语出炉", "流浪猫救助计划启动", "周末去哪儿玩"],
-                'zhihu': ["如何评价 GPT-5 的发布？", "30岁转行程序员还来得及吗？", "人类能在2030年登陆火星吗？", "极简主义生活是一种什么体验？", "有哪些相见恨晚的效率工具？"],
-                'tech': ["OpenAI 发布 GPT-5 Turbo", "SpaceX 星舰完成轨道测试", "量子计算取得重大突破", "苹果 Vision Pro 2 规格泄露", "新一代 ARM 芯片架构详解"]
-            };
-            const data = sourceMap[config.newsSource] || sourceMap['baidu'];
-            list.innerHTML = data.map((item, i) => `
-                <div class="flex items-center gap-3 py-3 border-b border-white/5 hover:bg-white/5 transition rounded-lg px-2 cursor-pointer">
-                    <span class="text-[var(--ios-blue)] font-bold text-sm min-w-[15px]">${i+1}</span>
-                    <p class="font-medium text-[14px] leading-snug truncate opacity-90">${item}</p>
-                </div>
-            `).join('');
+            const data = { 'baidu': ["国产大模型全面开放", "全球股市迎来技术性牛市", "新一代固态电池量产", "人工智能立法草案"], 'weibo': ["#周五快乐#", "#iOS新功能#", "年度十大流行语", "周末去哪儿玩"] }[config.newsSource] || ["科技前沿", "AI 突破性进展", "SpaceX 星舰发射", "苹果新品发布"];
+            list.innerHTML = data.map((item, i) => `<div class="flex items-center gap-3 py-3 border-b border-white/5 hover:bg-white/5 transition rounded-lg px-2 cursor-pointer"><span class="text-[var(--ios-blue)] font-bold text-sm min-w-[15px]">${i+1}</span><p class="font-medium text-[14px] leading-snug truncate opacity-90">${item}</p></div>`).join('');
         }
 
-        function renderShortcutsEdit() {
-            document.getElementById('shortcutList').innerHTML = config.shortcuts.map((s, idx) => `
-                <div class="flex justify-between items-center p-3 bg-white/5 rounded-lg mb-2">
-                    <span class="font-medium truncate w-32 text-sm">${s.name}</span>
-                    <button onclick="removeShortcut(${idx})" class="text-red-400 font-medium text-xs hover:bg-red-500/10 px-2 py-1 rounded transition">删除</button>
-                </div>
-            `).join('');
-        }
+        function renderShortcutsEdit() { document.getElementById('shortcutList').innerHTML = config.shortcuts.map((s, idx) => `<div class="flex justify-between items-center p-3 bg-white/5 rounded-lg mb-2"><span class="font-medium truncate w-32 text-sm">${s.name}</span><button onclick="removeShortcut(${idx})" class="text-red-400 font-medium text-xs hover:bg-red-500/10 px-2 py-1 rounded transition">删除</button></div>`).join(''); }
         function addShortcut() { const name = document.getElementById('newSiteName').value.trim(); const url = document.getElementById('newSiteUrl').value.trim(); if (name && url) { config.shortcuts.push({ name, url }); renderShortcutsEdit(); document.getElementById('newSiteName').value=''; document.getElementById('newSiteUrl').value=''; }}
         function removeShortcut(idx) { config.shortcuts.splice(idx, 1); renderShortcutsEdit(); }
         function toggleSettings(s) { document.getElementById('settingsPanel').classList.toggle('translate-x-full', !s); }
