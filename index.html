@@ -3,417 +3,460 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Infinity Pure</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
+    <title>Dashboard Ultimate Fixed</title>
+    <script src="https://cdn.staticfile.org/tailwindcss/3.3.5/tailwind.min.js"></script>
+    <script src="https://cdn.staticfile.org/Sortable/1.15.0/Sortable.min.js"></script>
     <style>
         :root {
-            --glass-bg: rgba(30, 30, 30, 0.50);
-            --glass-border: rgba(255, 255, 255, 0.12);
-            --accent: #0A84FF;
-            --text-primary: rgba(255, 255, 255, 0.95);
-        }
-        body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", sans-serif; overflow: hidden; background: #000; color: var(--text-primary); user-select: none; }
-        
-        .bg-layer { position: fixed; inset: 0; z-index: -1; background-size: cover; background-position: center; transition: all 0.5s ease; filter: brightness(0.9); }
-        .bg-layer.zen { filter: brightness(1.1); transform: scale(1.02); }
-        
-        /* 通用毛玻璃 */
-        .glass {
-            background: var(--glass-bg); backdrop-filter: blur(40px); -webkit-backdrop-filter: blur(40px);
-            border: 1px solid var(--glass-border); border-radius: 20px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3); transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
+            /* --- 默认模式 (浅色/高亮) --- */
+            --glass-surface: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --text-color: #ffffff;
+            --text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            
+            /* Dock 栏 (浅色冰霜) */
+            --dock-bg: rgba(255, 255, 255, 0.25);
+            --dock-border: rgba(255, 255, 255, 0.3);
+            --dock-icon-bg: #ffffff;
+            --dock-icon-color: #333333;
+            
+            /* 小组件背景 */
+            --widget-bg: rgba(30, 30, 30, 0.3);
+            
+            /* 壁纸亮度 */
+            --bg-brightness: 0.9;
         }
 
-        /* 侧边栏 Dock */
-        .sidebar {
-            position: fixed; left: 24px; top: 50%; transform: translateY(-50%);
-            display: flex; flex-direction: column; gap: 16px; padding: 16px 12px;
-            z-index: 40; transition: transform 0.4s ease, opacity 0.4s ease;
-            border-radius: 50px; /* 胶囊形状 */
+        /* --- 暗黑模式 (Dark Mode) 变量 --- */
+        body.dark-mode {
+            --glass-surface: rgba(0, 0, 0, 0.4);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --text-color: #e5e5e5;
+            --text-shadow: none;
+            
+            /* Dock 栏 (深色磨砂) */
+            --dock-bg: rgba(20, 20, 20, 0.6);
+            --dock-border: rgba(255, 255, 255, 0.1);
+            --dock-icon-bg: #333333;
+            --dock-icon-color: #cccccc;
+            
+            /* 小组件背景 */
+            --widget-bg: rgba(0, 0, 0, 0.5);
+            
+            /* 壁纸亮度 (更暗) */
+            --bg-brightness: 0.5;
         }
-        .cat-btn {
-            width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
-            cursor: pointer; color: rgba(255,255,255,0.5); transition: all 0.2s; position: relative; font-size: 18px;
-        }
-        .cat-btn:hover { background: rgba(255,255,255,0.1); color: white; transform: scale(1.1); }
-        .cat-btn.active { background: var(--accent); color: white; box-shadow: 0 0 15px rgba(10, 132, 255, 0.5); }
-        /* Tooltip */
-        .cat-btn::after {
-            content: attr(data-tooltip); position: absolute; left: 60px; background: rgba(0,0,0,0.8);
-            padding: 4px 10px; border-radius: 6px; font-size: 12px; opacity: 0; pointer-events: none; transition: opacity 0.2s; white-space: nowrap;
-        }
-        .cat-btn:hover::after { opacity: 1; }
-
-        /* --- 核心修改：矩形卡片网格 --- */
-        .shortcut-grid {
-            display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); 
-            gap: 16px; width: 100%; max-width: 900px; padding: 10px; min-height: 100px;
-        }
-        .shortcut-card {
-            background: rgba(255, 255, 255, 0.08);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            backdrop-filter: blur(12px);
-            border-radius: 16px;
-            height: 64px;
-            display: flex; align-items: center; justify-content: center;
-            cursor: pointer; position: relative;
-            text-decoration: none; color: white;
-            transition: all 0.2s;
-            overflow: hidden;
-        }
-        .shortcut-card:hover {
-            background: rgba(255, 255, 255, 0.15);
-            transform: translateY(-2px);
-            border-color: rgba(255, 255, 255, 0.2);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-        }
-        .shortcut-card:active { transform: scale(0.96); }
         
-        .card-name { font-size: 15px; font-weight: 500; letter-spacing: 0.5px; opacity: 0.9; }
+        body { 
+            margin: 0; font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif; 
+            overflow: hidden; background: #000; color: var(--text-color); user-select: none; 
+            text-shadow: var(--text-shadow); transition: color 0.3s;
+        }
         
-        /* 快捷键角标 */
-        .card-key {
-            position: absolute; top: 6px; right: 6px;
-            font-size: 9px; opacity: 0.4; font-weight: bold; border: 1px solid rgba(255,255,255,0.2);
-            border-radius: 4px; padding: 1px 4px; text-transform: uppercase;
+        /* 壁纸 */
+        .bg-layer { 
+            position: fixed; inset: 0; z-index: -1; 
+            background-size: cover; background-position: center; 
+            transition: filter 0.5s ease; 
+            filter: brightness(var(--bg-brightness)); /* 动态亮度 */
         }
-        /* 删除按钮 */
-        .card-del {
-            position: absolute; top: 0; left: 0; width: 24px; height: 100%;
-            background: rgba(255, 59, 48, 0.8); color: white; display: flex; align-items: center; justify-content: center;
-            font-size: 14px; opacity: 0; transition: opacity 0.2s;
-        }
-        .shortcut-card:hover .card-del { opacity: 0; /* 改为长按或设置模式显示，防止误触，这里简化为hover左侧不显示，右键删除逻辑已在JS实现 */ }
+        .bg-layer.zen { transform: scale(1.05); filter: blur(15px) brightness(var(--bg-brightness)); }
+        
+        .layout-container { display: flex; flex-direction: column; align-items: center; height: 100vh; width: 100%; overflow-y: auto; overflow-x: hidden; padding-top: 8vh; padding-bottom: 120px; }
 
+        /* 时间 */
+        .time-wrapper { text-align: center; margin-bottom: 30px; }
+        #clock { font-family: 'Helvetica Neue', sans-serif; font-weight: 800; letter-spacing: -3px; line-height: 1; font-size: 110px; }
+        
         /* 搜索框 */
-        .search-wrapper { position: relative; width: 100%; max-width: 500px; margin-bottom: 40px; z-index: 50; transition: all 0.4s; }
-        .search-bar { 
-            background: rgba(255,255,255,0.1); backdrop-filter: blur(20px); border-radius: 20px; height: 52px; 
-            display: flex; align-items: center; padding: 0 20px; border: 1px solid rgba(255,255,255,0.15); transition: all 0.3s; 
-        }
-        .search-bar:focus-within { background: rgba(255,255,255,0.2); border-color: rgba(255,255,255,0.4); box-shadow: 0 0 20px rgba(255,255,255,0.1); transform: scale(1.02); }
-        .search-input { background: transparent; border: none; color: white; width: 100%; height: 100%; font-size: 16px; outline: none; text-align: center; }
-        .search-input::placeholder { color: rgba(255,255,255,0.4); }
-        
-        /* 禅模式隐藏 */
-        .zen-hidden { opacity: 0; pointer-events: none; transform: scale(0.95); }
+        .search-wrapper { width: 90%; max-width: 500px; margin-bottom: 40px; position: relative; z-index: 20; }
+        .search-bar { background: var(--glass-surface); border: 1px solid var(--glass-border); backdrop-filter: blur(20px); border-radius: 16px; height: 50px; display: flex; align-items: center; padding: 0 20px; transition: all 0.3s; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
+        .search-input { width: 100%; background: transparent; border: none; outline: none; color: var(--text-color); font-size: 16px; text-align: center; text-shadow: inherit; }
 
-        /* 设置面板 */
+        /* 快捷方式 */
+        .shortcut-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 14px; width: 100%; max-width: 1000px; padding: 0 20px; margin-bottom: 50px; min-height: 80px; }
+        .shortcut-card { background: var(--glass-surface); border: 1px solid var(--glass-border); backdrop-filter: blur(12px); border-radius: 14px; height: 60px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--text-color); transition: all 0.2s; position: relative; }
+        .shortcut-card:hover { background: rgba(255, 255, 255, 0.2); transform: translateY(-3px); }
+        .shortcut-card .del-btn { position: absolute; top: -5px; right: -5px; background: red; color: white; width: 16px; height: 16px; border-radius: 50%; font-size: 10px; display: flex; align-items: center; justify-content: center; opacity: 0; transition: 0.2s; }
+        .shortcut-card:hover .del-btn { opacity: 1; }
+
+        /* 底部工具 */
+        .widget-area { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; width: 100%; max-width: 1200px; padding: 0 20px; transition: all 0.3s; }
+        .widget-area.cols-2 { grid-template-columns: 1fr 1fr; max-width: 900px; }
+        .widget-area.cols-1 { grid-template-columns: 1fr; max-width: 500px; }
+        
+        .widget-box { 
+            background: var(--widget-bg); 
+            border: 1px solid var(--glass-border); border-radius: 18px; padding: 18px; 
+            display: flex; flex-direction: column; backdrop-filter: blur(30px); min-height: 240px; 
+            transition: background 0.3s;
+        }
+        .widget-head { display: flex; justify-content: space-between; margin-bottom: 12px; align-items: center; opacity: 0.8; border-bottom: 1px solid var(--glass-border); padding-bottom: 8px; }
+        .widget-title { font-size: 11px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; }
+
+        /* --- Dock 栏 (浅色变量控制) --- */
+        .dock-wrapper { position: fixed; bottom: 30px; left: 0; width: 100%; display: flex; justify-content: center; z-index: 100; pointer-events: none; }
+        .dock { 
+            pointer-events: auto; display: flex; align-items: center; justify-content: space-between; 
+            gap: 24px; padding: 0 30px; height: 48px; 
+            background: var(--dock-bg); /* 使用变量 */
+            backdrop-filter: blur(40px) saturate(150%);
+            border: 1px solid var(--dock-border); 
+            border-radius: 16px; 
+            box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+            transition: all 0.3s ease; 
+            min-width: 460px;
+        }
+        .dock:hover { transform: scale(1.02); }
+        
+        .dock-icon { 
+            width: 28px; height: 28px; 
+            display: flex; align-items: center; justify-content: center; 
+            cursor: pointer; 
+            background: var(--dock-icon-bg); color: var(--dock-icon-color);
+            border-radius: 6px; /* 微圆角 */
+            transition: 0.2s cubic-bezier(0.3, 0.7, 0.4, 1.5); 
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .dock-icon svg { width: 18px; height: 18px; fill: currentColor; }
+        
+        /* 悬停 */
+        .dock-icon:hover { transform: scale(1.2) translateY(-4px); z-index: 10; }
+        
+        /* 激活状态 */
+        .dock-icon.active { background: #007AFF; color: white; }
+        .dock-icon.active svg { fill: white; }
+        
+        .dock-sep { width: 1px; height: 20px; background: var(--glass-border); }
+
+        .zen-hidden { opacity: 0; transform: translateY(20px) scale(0.95); pointer-events: none; }
+        ::-webkit-scrollbar { display: none; }
+
+        /* --- 设置面板 --- */
         .settings-panel {
-            position: fixed; top: 0; right: 0; bottom: 0; width: 360px; background: rgba(20, 20, 20, 0.95); backdrop-filter: blur(30px);
+            position: fixed; top: 0; right: 0; width: 340px; height: 100%;
+            background: rgba(20, 20, 20, 0.95); backdrop-filter: blur(50px);
+            border-left: 1px solid rgba(255,255,255,0.1);
             transform: translateX(100%); transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            z-index: 100; padding: 24px; box-shadow: -10px 0 30px rgba(0,0,0,0.5); overflow-y: auto; border-left: 1px solid rgba(255,255,255,0.1);
+            z-index: 200; padding: 24px; color: white; overflow-y: auto; text-shadow: none;
         }
         .settings-panel.open { transform: translateX(0); }
-        .panel-section { background: rgba(255,255,255,0.05); border-radius: 16px; padding: 16px; margin-bottom: 16px; }
-        .panel-title { font-size: 12px; font-weight: 700; color: rgba(255,255,255,0.4); text-transform: uppercase; margin-bottom: 12px; }
-        .ios-input { width: 100%; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1); color: white; padding: 12px; border-radius: 10px; font-size: 14px; outline: none; transition: border-color 0.2s; }
-        .ios-input:focus { border-color: var(--accent); }
-        .ios-btn { width: 100%; background: var(--accent); color: white; padding: 12px; border-radius: 12px; font-size: 14px; font-weight: 600; cursor: pointer; margin-top: 10px; text-align: center; }
         
-        /* 滚动条隐藏 */
-        ::-webkit-scrollbar { display: none; }
+        .st-section { margin-bottom: 24px; }
+        .st-label { font-size: 11px; font-weight: bold; color: rgba(255,255,255,0.4); margin-bottom: 8px; text-transform: uppercase; }
+        .st-item { display: flex; justify-content: space-between; align-items: center; padding: 10px; background: rgba(255,255,255,0.05); border-radius: 8px; margin-bottom: 8px; font-size: 13px; }
+        .st-input { background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); padding: 8px; border-radius: 6px; width: 100%; color: white; font-size: 12px; margin-bottom: 6px; outline: none; }
+        
+        /* 开关 */
+        .toggle-switch { position: relative; width: 36px; height: 20px; background: rgba(255,255,255,0.2); border-radius: 20px; transition: 0.3s; cursor: pointer; }
+        .toggle-switch::after { content:''; position: absolute; left: 2px; top: 2px; width: 16px; height: 16px; background: white; border-radius: 50%; transition: 0.3s; }
+        .toggle-switch.active { background: #3b82f6; }
+        .toggle-switch.active::after { transform: translateX(16px); }
+
+        /* 新闻列表优化 */
+        .news-item { padding: 6px 0; border-bottom: 1px solid var(--glass-border); display: flex; gap: 8px; cursor: pointer; opacity: 0.9; transition: 0.2s; align-items: center; }
+        .news-item:hover { opacity: 1; transform: translateX(4px); }
+        .news-idx { font-size: 12px; font-weight: bold; color: #3b82f6; width: 18px; text-align: center; }
     </style>
 </head>
 <body>
 
     <div id="mainBg" class="bg-layer" style="background-image: url('https://bing.biturl.top/?resolution=1920&format=image&index=0&mkt=zh-CN');" onclick="toggleZenMode()"></div>
 
-    <div id="sidebar" class="sidebar glass">
-        <div class="cat-btn active" onclick="switchCategory('main')" data-tooltip="主页">●</div>
-        <div class="cat-btn" onclick="switchCategory('work')" data-tooltip="工作">◆</div>
-        <div class="cat-btn" onclick="switchCategory('media')" data-tooltip="娱乐">▲</div>
-        <div class="cat-btn" onclick="switchCategory('tools')" data-tooltip="工具">■</div>
-        <div class="w-6 h-[1px] bg-white/10 my-1 mx-auto"></div>
-        <div class="cat-btn" onclick="toggleZenMode()" data-tooltip="禅模式">◎</div>
-        <div class="cat-btn" onclick="toggleSettings(true)" data-tooltip="设置">⚙</div>
-    </div>
-
-    <div id="mainContainer" class="relative h-screen w-full flex flex-col items-center p-6 overflow-y-auto transition-all duration-500">
-        
-        <div class="flex flex-col items-center mt-12 mb-8">
-            <h1 id="clock" class="text-8xl font-bold tracking-tight drop-shadow-2xl mb-2 font-[Helvetica]">00:00</h1>
-            <div class="flex items-center gap-4 opacity-70 text-sm font-medium tracking-wide">
-                <span id="date">LOADING...</span>
-                <span class="w-1 h-1 bg-white rounded-full"></span>
-                <span id="weather">--°C</span>
-            </div>
+    <div id="layout" class="layout-container">
+        <div class="time-wrapper">
+            <h1 id="clock">00:00</h1>
+            <div id="dateStr" style="font-size:14px; opacity:0.8; letter-spacing:2px; margin-top:10px;">LOADING...</div>
         </div>
 
         <div class="search-wrapper">
             <div class="search-bar">
-                <input type="text" id="searchInput" class="search-input" placeholder="Search..." autocomplete="off">
+                <input id="searchInput" class="search-input" placeholder="Search..." autocomplete="off">
             </div>
         </div>
 
-        <div id="shortcutsGrid" class="shortcut-grid mb-12">
+        <div id="shortcutsGrid" class="shortcut-grid"></div>
+
+        <div id="widgetArea" class="widget-area">
+            
+            <div id="mod-todo" class="widget-box">
+                <div class="widget-head"><span class="widget-title">待办清单</span><span class="cursor-pointer hover:text-blue-400" onclick="addTodo()">+</span></div>
+                <input id="todoInput" class="bg-transparent border-b border-white/20 w-full text-sm py-1 outline-none text-white/80 placeholder-white/30 mb-2" placeholder="输入回车添加..." onkeypress="if(event.key==='Enter') addTodo()">
+                <div id="todoList" class="flex-1 overflow-y-auto space-y-1"></div>
             </div>
 
-        <div id="infoGrid" class="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-[1200px] mb-10 transition-opacity duration-500">
-            <div class="glass p-5 h-[280px] flex flex-col">
-                <div class="flex justify-between items-center mb-3 opacity-60">
-                    <span class="text-xs font-bold uppercase">Trending</span>
-                    <select id="newsSource" class="bg-transparent text-[10px] outline-none" onchange="loadNews(this.value)">
-                        <option value="baidu">百度</option><option value="wb">微博</option><option value="zhihu">知乎</option>
-                    </select>
+            <div id="mod-news" class="widget-box">
+                <div class="widget-head">
+                    <span class="widget-title">全网热搜</span>
+                    <div class="flex gap-2">
+                        <span class="text-[10px] opacity-60 cursor-pointer hover:text-white hover:underline" onclick="changeNewsSource('baidu')">百度</span>
+                        <span class="text-[10px] opacity-30">|</span>
+                        <span class="text-[10px] opacity-60 cursor-pointer hover:text-white hover:underline" onclick="changeNewsSource('wb')">微博</span>
+                    </div>
                 </div>
-                <div id="newsList" class="flex-1 overflow-y-auto space-y-2.5 text-sm"></div>
+                <div id="newsList" class="flex-1 overflow-y-auto text-xs space-y-2">
+                    <div class="text-center opacity-50 mt-10">加载中...</div>
+                </div>
             </div>
 
-            <div class="glass p-5 h-[280px] flex flex-col">
-                <span class="text-xs font-bold uppercase opacity-60 mb-3">Tasks</span>
-                <div class="flex gap-2 mb-2">
-                    <input id="todoInput" class="bg-white/5 border-none rounded px-3 py-1.5 text-sm flex-1 outline-none" placeholder="Add a task..." onkeypress="if(event.key==='Enter') addTodo()">
-                </div>
-                <div id="todoList" class="flex-1 overflow-y-auto space-y-1.5"></div>
-            </div>
-
-            <div class="glass p-1 h-[280px] overflow-hidden">
-                <div class="tradingview-widget-container w-full h-full" style="filter: invert(1) hue-rotate(180deg) brightness(1.2) contrast(0.9);">
-                    <div class="tradingview-widget-container__widget"></div>
-                    <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-market-overview.js" async>
-                    { "colorTheme": "light", "dateRange": "12M", "showChart": false, "locale": "zh_CN", "width": "100%", "height": "100%", "isTransparent": true,
-                      "tabs": [ { "title": "Indices", "symbols": [ { "s": "NASDAQ:NDX" }, { "s": "S&P:SPX" }, { "s": "TVC:NI225" }, { "s": "FX_IDC:USDCNY" } ] } ] }
-                    </script>
-                </div>
+            <div id="mod-stock" class="widget-box">
+                <div class="widget-head"><span class="widget-title">行情关注</span><span class="text-[10px] opacity-50">实时</span></div>
+                <div id="stockList" class="flex-1 overflow-y-auto pr-1"></div>
             </div>
         </div>
     </div>
 
-    <button id="exitZenBtn" class="fixed bottom-10 left-1/2 -translate-x-1/2 glass px-8 py-3 rounded-full opacity-0 pointer-events-none transition-all duration-300 z-50 text-sm font-bold hover:bg-white/20" onclick="toggleZenMode()">
-        恢复显示
-    </button>
+    <div id="dockWrapper" class="dock-wrapper">
+        <div class="dock">
+            <div class="dock-icon active" onclick="switchCategory('main')" title="Main"><svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg></div>
+            <div class="dock-icon" onclick="switchCategory('work')" title="Work"><svg viewBox="0 0 24 24"><path d="M20 6h-4V4c0-1.11-.89-2-2-2h-4c-1.11 0-2 .89-2 2v2H4c-1.11 0-1.99.89-1.99 2L2 19c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2zm-6 0h-4V4h4v2z"/></svg></div>
+            <div class="dock-icon" onclick="switchCategory('media')" title="Media"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
+            <div class="dock-sep"></div>
+            <div class="dock-icon" onclick="toggleZenMode()" title="Zen"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/><circle cx="12" cy="12" r="5"/></svg></div>
+            <div class="dock-icon" onclick="toggleSettings(true)" title="Settings"><svg viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36-2.54c.59-.24 1.13-.58 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg></div>
+        </div>
+    </div>
 
     <div id="settingsPanel" class="settings-panel">
-        <div class="flex justify-between items-center mb-8">
-            <h2 class="text-2xl font-bold">设置</h2>
-            <button onclick="toggleSettings(false)" class="text-2xl opacity-50 hover:opacity-100">×</button>
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="text-xl font-bold">设置中心</h2>
+            <button onclick="toggleSettings(false)" class="opacity-50 hover:text-white">✕</button>
         </div>
-        
-        <div class="panel-section">
-            <div class="panel-title">数据管理</div>
+
+        <div class="st-section">
+            <div class="st-item">
+                <span>暗黑模式 (Dark Mode)</span>
+                <div class="toggle-switch" id="sw-dark" onclick="toggleDarkMode()"></div>
+            </div>
+        </div>
+
+        <div class="st-section">
+            <div class="st-label">默认搜索引擎</div>
+            <select id="searchEngineSelect" class="st-input" onchange="changeSearchEngine(this.value)">
+                <option value="baidu">百度搜索</option>
+                <option value="google">Google</option>
+                <option value="bing">Bing</option>
+            </select>
+        </div>
+
+        <div class="st-section">
+            <div class="st-label">功能模块开关</div>
+            <div class="st-item"><span>待办事项</span><div class="toggle-switch" id="sw-todo" onclick="toggleModule('todo')"></div></div>
+            <div class="st-item"><span>热榜新闻</span><div class="toggle-switch" id="sw-news" onclick="toggleModule('news')"></div></div>
+            <div class="st-item"><span>股票行情</span><div class="toggle-switch" id="sw-stock" onclick="toggleModule('stock')"></div></div>
+        </div>
+
+        <div class="st-section">
+            <div class="st-label">股票/汇率关注</div>
+            <div class="st-item flex-col items-start">
+                <div id="stockListSettings" class="w-full mb-2 space-y-1"></div>
+                <div class="flex w-full gap-2">
+                    <input id="newStockInput" class="st-input mb-0" placeholder="如: BABA, AAPL">
+                    <button onclick="addStock()" class="bg-blue-600 px-3 rounded text-xs font-bold">添加</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="st-section">
+            <div class="st-label">添加图标</div>
+            <input id="addName" class="st-input" placeholder="网站名称">
+            <input id="addUrl" class="st-input" placeholder="网址 (https://...)">
+            <button onclick="addShortcut()" class="w-full bg-white/10 py-2 rounded text-xs font-bold mt-1">添加快捷方式</button>
+        </div>
+
+        <div class="st-section border-t border-white/10 pt-4">
             <div class="grid grid-cols-2 gap-3">
-                <button onclick="exportConfig()" class="ios-btn bg-blue-600 mt-0">备份配置</button>
-                <label class="ios-btn bg-white/10 mt-0 block cursor-pointer">恢复配置 <input type="file" class="hidden" accept=".json" onchange="importConfig(this)"></label>
+                <button onclick="exportConfig()" class="bg-green-600 py-2 rounded text-xs font-bold">备份配置</button>
+                <label class="bg-white/10 py-2 rounded text-xs font-bold text-center cursor-pointer">
+                    恢复配置 <input type="file" class="hidden" onchange="importConfig(this)">
+                </label>
             </div>
         </div>
-
-        <div class="panel-section">
-            <div class="panel-title">添加图标 (当前分类)</div>
-            <div class="flex gap-3 mb-3">
-                <input id="addName" type="text" class="ios-input" placeholder="名称">
-                <input id="addKey" type="text" class="ios-input w-20 text-center" placeholder="快捷键" maxlength="1">
-            </div>
-            <input id="addUrl" type="text" class="ios-input mb-3" placeholder="https://...">
-            <button onclick="addShortcut()" class="ios-btn">添加</button>
-        </div>
-
-        <div class="panel-section">
-            <div class="panel-title">偏好设置</div>
-            <input id="cityInput" class="ios-input mb-3" placeholder="城市 (拼音)">
-            <button onclick="saveSettings()" class="ios-btn bg-green-600">保存修改</button>
-        </div>
-        
-        <p class="text-center text-xs opacity-20 mt-8">Infinity Pure v2.0</p>
     </div>
 
     <script>
-        // --- 默认数据 ---
-        let data = {
+        // 配置
+        let config = {
+            darkMode: false,
+            modules: { todo: true, news: true, stock: true },
+            searchEngine: 'baidu', 
+            newsSource: 'baidu',
+            stocks: ['NASDAQ:NDX', 'HK:00700', 'FX_IDC:USDCNY'],
             currentCat: 'main',
-            city: 'Shanghai',
             todos: [],
-            // 分类数据结构 (去掉了不美观的图标依赖)
             categories: {
-                'main': [
-                    { name: 'Bilibili', url: 'https://www.bilibili.com', key: 'b' },
-                    { name: 'GitHub', url: 'https://github.com', key: 'g' },
-                    { name: 'ChatGPT', url: 'https://chat.openai.com', key: 'c' },
-                    { name: 'YouTube', url: 'https://www.youtube.com', key: 'y' }
-                ],
-                'work': [
-                    { name: 'Gmail', url: 'https://mail.google.com', key: 'm' },
-                    { name: 'Notion', url: 'https://www.notion.so', key: 'n' },
-                    { name: 'Figma', url: 'https://www.figma.com', key: 'f' }
-                ],
-                'media': [
-                    { name: 'Netflix', url: 'https://www.netflix.com', key: '' },
-                    { name: 'Spotify', url: 'https://open.spotify.com', key: '' }
-                ],
-                'tools': [
-                    { name: 'DeepL', url: 'https://www.deepl.com', key: 'd' },
-                    { name: 'Translate', url: 'https://translate.google.com', key: 't' }
-                ]
+                'main': [ { name: 'Bilibili', url: 'https://www.bilibili.com' }, { name: 'GitHub', url: 'https://github.com' } ],
+                'work': [ { name: 'Gmail', url: 'https://mail.google.com' } ],
+                'media': [ { name: 'YouTube', url: 'https://www.youtube.com' } ]
             }
         };
-
-        let isZen = false;
+        const engines = { google: "https://www.google.com/search?q=", baidu: "https://www.baidu.com/s?wd=", bing: "https://www.bing.com/search?q=" };
 
         function init() {
-            const saved = localStorage.getItem('infinity_pure_v1');
-            if (saved) {
-                const parsed = JSON.parse(saved);
-                data = { ...data, ...parsed, categories: { ...data.categories, ...(parsed.categories || {}) } };
-            }
+            const saved = localStorage.getItem('ultra_dash_fixed_v1');
+            if (saved) config = { ...config, ...JSON.parse(saved) };
             
-            setupDrag();
-            setupKeys();
-            startClock();
-            loadNews('baidu');
-            renderTodos();
+            // 应用设置
+            if (config.darkMode) document.body.classList.add('dark-mode');
+            updateUIState();
+            
+            // 渲染内容
             renderShortcuts();
+            renderTodos();
+            renderStocks();
+            loadNews(config.newsSource);
+            startClock();
             
             document.getElementById('searchInput').addEventListener('keydown', e => {
-                if(e.key === 'Enter') {
-                    const val = e.target.value.trim();
-                    if(val) window.open(`https://www.google.com/search?q=${encodeURIComponent(val)}`, '_blank');
+                if(e.key === 'Enter' && e.target.value.trim()) {
+                    const engineUrl = engines[config.searchEngine] || engines.baidu;
+                    window.open(engineUrl + encodeURIComponent(e.target.value), '_blank');
                     e.target.value = '';
                 }
             });
+            
+            new Sortable(document.getElementById('shortcutsGrid'), { animation: 150, onEnd: saveConfig });
         }
 
-        function switchCategory(cat) {
-            data.currentCat = cat;
-            document.querySelectorAll('.cat-btn').forEach(btn => btn.classList.remove('active'));
-            const btns = document.getElementById('sidebar').children;
-            const map = { 'main':0, 'work':1, 'media':2, 'tools':3 };
-            if(map[cat] !== undefined) btns[map[cat]].classList.add('active');
-            renderShortcuts();
+        // --- 逻辑控制 ---
+        function toggleDarkMode() {
+            config.darkMode = !config.darkMode;
+            document.body.classList.toggle('dark-mode', config.darkMode);
+            updateUIState();
+            saveConfig();
         }
 
-        // 核心修改：渲染纯净矩形卡片
-        function renderShortcuts() {
-            const list = data.categories[data.currentCat] || [];
-            const container = document.getElementById('shortcutsGrid');
-            container.innerHTML = list.map((item, idx) => `
-                <a href="${item.url}" target="_blank" class="shortcut-card" data-id="${idx}" oncontextmenu="event.preventDefault(); if(confirm('删除此项？')) removeShortcut(${idx})">
-                    <span class="card-name">${item.name}</span>
-                    ${item.key ? `<span class="card-key">${item.key.toUpperCase()}</span>` : ''}
-                </a>
+        function changeSearchEngine(val) { config.searchEngine = val; saveConfig(); document.getElementById('searchInput').placeholder = `Search with ${val}...`; }
+        function toggleModule(key) { config.modules[key] = !config.modules[key]; updateUIState(); saveConfig(); }
+        
+        function updateUIState() {
+            document.getElementById('sw-dark').className = `toggle-switch ${config.darkMode ? 'active' : ''}`;
+            document.getElementById('sw-todo').className = `toggle-switch ${config.modules.todo ? 'active' : ''}`;
+            document.getElementById('sw-news').className = `toggle-switch ${config.modules.news ? 'active' : ''}`;
+            document.getElementById('sw-stock').className = `toggle-switch ${config.modules.stock ? 'active' : ''}`;
+            
+            document.getElementById('mod-todo').style.display = config.modules.todo ? 'flex' : 'none';
+            document.getElementById('mod-news').style.display = config.modules.news ? 'flex' : 'none';
+            document.getElementById('mod-stock').style.display = config.modules.stock ? 'flex' : 'none';
+            
+            const activeCount = Object.values(config.modules).filter(v => v).length;
+            const area = document.getElementById('widgetArea');
+            area.className = `widget-area cols-${activeCount}`;
+            
+            document.getElementById('searchEngineSelect').value = config.searchEngine;
+            renderSettingsStockList();
+        }
+
+        // 股票渲染
+        function renderStocks() {
+            const container = document.getElementById('stockList');
+            container.innerHTML = ''; 
+            config.stocks.forEach(s => {
+                const wrap = document.createElement('div');
+                wrap.style.height = '70px';
+                const div = document.createElement('div');
+                div.className = 'tradingview-widget-container';
+                div.style.width = '100%'; div.style.height='100%';
+                div.innerHTML = '<div class="tradingview-widget-container__widget"></div>';
+                const script = document.createElement('script');
+                script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-single-quote.js';
+                script.async = true;
+                script.innerHTML = JSON.stringify({ "symbol": s, "width": "100%", "height": "100%", "colorTheme": "dark", "isTransparent": true, "locale": "zh_CN" });
+                div.appendChild(script);
+                wrap.appendChild(div);
+                container.appendChild(wrap);
+            });
+        }
+
+        function renderSettingsStockList() {
+            const list = document.getElementById('stockListSettings');
+            list.innerHTML = config.stocks.map((s, i) => `
+                <div class="flex justify-between items-center bg-white/10 px-2 py-1 rounded">
+                    <span class="text-xs opacity-70">${s}</span>
+                    <span class="text-red-400 cursor-pointer text-xs" onclick="removeStock(${i})">✕</span>
+                </div>
             `).join('');
         }
-
-        function setupDrag() {
-            new Sortable(document.getElementById('shortcutsGrid'), {
-                animation: 200,
-                ghostClass: 'opacity-50',
-                onEnd: (evt) => {
-                    const list = data.categories[data.currentCat];
-                    const item = list.splice(evt.oldIndex, 1)[0];
-                    list.splice(evt.newIndex, 0, item);
-                    saveData();
-                }
-            });
+        function addStock() {
+            const val = document.getElementById('newStockInput').value.trim();
+            if(val) { config.stocks.push(val); saveConfig(); updateUIState(); renderStocks(); document.getElementById('newStockInput').value = ''; }
         }
+        function removeStock(i) { config.stocks.splice(i, 1); saveConfig(); updateUIState(); renderStocks(); }
 
-        function setupKeys() {
-            document.addEventListener('keydown', (e) => {
-                if (['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName)) return;
-                const key = e.key.toLowerCase();
-                const currentList = data.categories[data.currentCat];
-                const target = currentList.find(i => i.key && i.key.toLowerCase() === key);
-                if (target) window.open(target.url, '_blank');
-            });
+        // 新闻源
+        function changeNewsSource(val) { config.newsSource = val; saveConfig(); loadNews(val); }
+
+        // 快捷方式
+        function switchCategory(cat) {
+            config.currentCat = cat;
+            document.querySelectorAll('.dock-icon').forEach(el => el.classList.remove('active'));
+            const map = ['main','work','media'];
+            const idx = map.indexOf(cat);
+            if(idx>-1) document.querySelectorAll('.dock-icon')[idx].classList.add('active');
+            renderShortcuts();
         }
+        function renderShortcuts() {
+            const list = config.categories[config.currentCat] || [];
+            document.getElementById('shortcutsGrid').innerHTML = list.map((item, idx) => `
+                <div class="shortcut-card" onclick="window.open('${item.url}')">
+                    <span style="font-size:13px; font-weight:500">${item.name}</span>
+                    <div class="del-btn" onclick="event.stopPropagation(); removeShortcut(${idx})">✕</div>
+                </div>
+            `).join('');
+        }
+        function addShortcut() {
+            const name = document.getElementById('addName').value;
+            const url = document.getElementById('addUrl').value;
+            if(name && url) { config.categories[config.currentCat].push({name, url}); saveConfig(); renderShortcuts(); }
+        }
+        function removeShortcut(i) { config.categories[config.currentCat].splice(i,1); saveConfig(); renderShortcuts(); }
 
-        function toggleZenMode() {
-            isZen = !isZen;
-            const uiElements = [document.getElementById('sidebar'), document.getElementById('shortcutsGrid'), document.getElementById('infoGrid'), document.querySelector('.search-wrapper')];
-            const bg = document.querySelector('.bg-layer');
-            const exitBtn = document.getElementById('exitZenBtn');
+        // 待办
+        function renderTodos() {
+            document.getElementById('todoList').innerHTML = config.todos.map((t, i) => `
+                <div class="flex items-center gap-2 p-1 border-b border-white/5">
+                    <div class="w-3 h-3 border border-white/50 rounded cursor-pointer" onclick="toggleTodo(${i})">${t.done?'<div class="w-full h-full bg-white scale-75"></div>':''}</div>
+                    <span class="${t.done?'line-through opacity-30':''} flex-1 truncate text-xs">${t.text}</span>
+                    <span class="opacity-30 cursor-pointer text-xs" onclick="delTodo(${i})">✕</span>
+                </div>
+            `).join('');
+        }
+        function addTodo(){const v=document.getElementById('todoInput').value;if(v){config.todos.push({text:v,done:false});saveConfig();renderTodos();document.getElementById('todoInput').value='';}}
+        function toggleTodo(i){config.todos[i].done=!config.todos[i].done;saveConfig();renderTodos();}
+        function delTodo(i){config.todos.splice(i,1);saveConfig();renderTodos();}
 
-            if (isZen) {
-                uiElements.forEach(el => el.classList.add('zen-hidden'));
-                bg.classList.add('zen');
-                exitBtn.style.opacity = '1';
-                exitBtn.style.pointerEvents = 'auto';
-            } else {
-                uiElements.forEach(el => el.classList.remove('zen-hidden'));
-                bg.classList.remove('zen');
-                exitBtn.style.opacity = '0';
-                exitBtn.style.pointerEvents = 'none';
+        // 新闻服务 (增强重试)
+        async function loadNews(src) {
+            const list = document.getElementById('newsList');
+            list.innerHTML = '<div class="text-center opacity-30 mt-4">Loading...</div>';
+            try {
+                // 使用时间戳防缓存
+                const res = await fetch(`https://api.vvhan.com/api/hotlist?type=${src}&_t=${new Date().getTime()}`);
+                const j = await res.json();
+                if(j.success) list.innerHTML = j.data.slice(0, 8).map((n, i) => `
+                    <div class="news-item" onclick="window.open('${n.url}')">
+                        <span class="news-idx">${i+1}</span>
+                        <span class="truncate flex-1">${n.title}</span>
+                    </div>`).join('');
+                else throw new Error();
+            } catch(e) {
+                list.innerHTML = '<div class="text-center opacity-30 mt-4 cursor-pointer" onclick="loadNews(\''+src+'\')">加载失败，点击重试</div>'; 
             }
         }
-
         function startClock() {
             setInterval(() => {
                 const n = new Date();
                 document.getElementById('clock').innerText = n.toLocaleTimeString('zh-CN', {hour12:false, hour:'2-digit', minute:'2-digit'});
-                document.getElementById('date').innerText = `${n.getMonth()+1}月${n.getDate()}日`;
+                document.getElementById('dateStr').innerText = n.toLocaleDateString('zh-CN', {month:'long', day:'numeric', weekday:'long'});
             }, 1000);
-            fetch(`https://wttr.in/${data.city}?format=%t`).then(r=>r.text()).then(t=>document.getElementById('weather').innerText=t.trim()).catch(()=>{});
         }
 
-        async function loadNews(source) {
-            const list = document.getElementById('newsList');
-            list.innerHTML = '<div class="opacity-50 text-center mt-4">Loading...</div>';
-            try {
-                // 使用公共接口
-                const res = await fetch(`https://api.vvhan.com/api/hotlist?type=${source}`);
-                const json = await res.json();
-                if(json.success) {
-                    list.innerHTML = json.data.slice(0, 8).map((n, i) => `
-                        <div class="flex items-center gap-3 py-2 px-2 rounded hover:bg-white/5 cursor-pointer transition" onclick="window.open('${n.url}')">
-                            <span class="text-blue-400 font-bold w-4 text-xs">${i+1}</span>
-                            <span class="truncate opacity-90 hover:opacity-100 flex-1">${n.title}</span>
-                            <span class="text-[10px] opacity-30">${n.hot || ''}</span>
-                        </div>
-                    `).join('');
-                }
-            } catch(e) { 
-                list.innerHTML = '<div class="opacity-30 text-center mt-4">API Offline</div>'; 
-            }
-        }
-
-        function renderTodos() {
-            document.getElementById('todoList').innerHTML = data.todos.map((t, i) => `
-                <div class="flex items-center gap-3 px-3 py-2 bg-white/5 rounded-lg group">
-                    <div class="w-4 h-4 border border-white/30 rounded cursor-pointer flex items-center justify-center transition hover:border-white" onclick="toggleTodo(${i})">
-                        ${t.done ? '<div class="w-2 h-2 bg-white rounded-full"></div>' : ''}
-                    </div>
-                    <span class="${t.done ? 'line-through opacity-30' : ''} flex-1 text-sm truncate select-text">${t.text}</span>
-                    <span class="cursor-pointer opacity-0 group-hover:opacity-40 hover:!opacity-100 text-xs" onclick="delTodo(${i})">✕</span>
-                </div>
-            `).join('');
-        }
-        function addTodo() { const v=document.getElementById('todoInput').value.trim(); if(v){data.todos.push({text:v,done:false}); saveData(); renderTodos(); document.getElementById('todoInput').value='';} }
-        function toggleTodo(i) { data.todos[i].done = !data.todos[i].done; saveData(); renderTodos(); }
-        function delTodo(i) { data.todos.splice(i,1); saveData(); renderTodos(); }
-
-        function addShortcut() {
-            const name = document.getElementById('addName').value.trim();
-            const url = document.getElementById('addUrl').value.trim();
-            const key = document.getElementById('addKey').value.trim();
-            if(name && url) {
-                data.categories[data.currentCat].push({ name, url, key });
-                saveData(); renderShortcuts();
-                document.getElementById('addName').value=''; document.getElementById('addUrl').value=''; document.getElementById('addKey').value='';
-            }
-        }
-        function removeShortcut(idx) {
-            data.categories[data.currentCat].splice(idx, 1);
-            saveData(); renderShortcuts();
-        }
-
-        function saveData() { localStorage.setItem('infinity_pure_v1', JSON.stringify(data)); }
-        function exportConfig() {
-            const blob = new Blob([JSON.stringify(data)], {type: "application/json"});
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement("a"); a.href = url; a.download = "my_dashboard_backup.json"; a.click();
-        }
-        function importConfig(input) {
-            const file = input.files[0];
-            if(!file) return;
-            const r = new FileReader();
-            r.onload = e => { try { data = { ...data, ...JSON.parse(e.target.result) }; saveData(); location.reload(); } catch(err) { alert('文件错误'); } };
-            r.readAsText(file);
-        }
-        function saveSettings() {
-            data.city = document.getElementById('cityInput').value || 'Shanghai';
-            saveData(); location.reload();
-        }
-        function toggleSettings(show) { document.getElementById('settingsPanel').classList.toggle('open', show); }
+        // 数据
+        function saveConfig() { localStorage.setItem('ultra_dash_fixed_v1', JSON.stringify(config)); }
+        function toggleZenMode() { document.querySelector('.bg-layer').classList.toggle('zen'); document.querySelectorAll('#widgetArea, .search-wrapper, #shortcutsGrid').forEach(e => e.style.opacity = e.style.opacity === '0' ? '1' : '0'); }
+        function toggleSettings(s) { document.getElementById('settingsPanel').classList.toggle('open', s); }
+        function exportConfig() { const b=new Blob([JSON.stringify(config)],{type:"application/json"}); const a=document.createElement("a"); a.href=URL.createObjectURL(b); a.download="config.json"; a.click(); }
+        function importConfig(input) { const f = input.files[0]; if(!f)return; const r = new FileReader(); r.onload = e => { try { config={...config,...JSON.parse(e.target.result)}; saveConfig(); location.reload(); } catch(err){} }; r.readAsText(f); }
 
         window.onload = init;
     </script>
