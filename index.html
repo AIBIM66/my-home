@@ -3,12 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Ultimate Clean Dashboard</title>
+    <title>Dashboard Ultimate Max</title>
     <script src="https://cdn.staticfile.org/tailwindcss/3.3.5/tailwind.min.js"></script>
     <script src="https://cdn.staticfile.org/Sortable/1.15.0/Sortable.min.js"></script>
     <style>
         :root {
-            /* 浅色模式 */
             --glass-bg: rgba(255, 255, 255, 0.12);
             --glass-border: rgba(255, 255, 255, 0.25);
             --text-main: #ffffff;
@@ -18,7 +17,6 @@
         }
 
         body.dark {
-            /* 深色模式 */
             --glass-bg: rgba(0, 0, 0, 0.5);
             --glass-border: rgba(255, 255, 255, 0.08);
             --text-main: #e0e0e0;
@@ -33,7 +31,6 @@
             transition: color 0.3s ease;
         }
 
-        /* 壁纸层 (国内源) */
         .bg-layer { 
             position: fixed; inset: 0; z-index: -1; 
             background-size: cover; background-position: center; 
@@ -42,41 +39,45 @@
         body.dark .bg-layer { filter: brightness(0.5); }
         .bg-layer.zen { transform: scale(1.05); filter: blur(20px); }
 
-        /* 主容器 */
         .main-container {
             position: absolute; inset: 0; overflow-y: auto; overflow-x: hidden;
-            padding-top: 8vh; 
-            padding-bottom: 120px; /* 底部留白 */
+            padding-top: 8vh; padding-bottom: 120px;
             display: flex; flex-direction: column; align-items: center;
         }
 
-        /* 1. 时间与天气 */
+        /* 1. 时间 */
         .clock-section { text-align: center; margin-bottom: 30px; text-shadow: 0 4px 15px rgba(0,0,0,0.3); }
-        #clock { 
-            font-family: 'Helvetica Neue', sans-serif; font-weight: 800; letter-spacing: -2px; 
-            font-size: 100px; line-height: 1;
-        }
+        #clock { font-family: 'Helvetica Neue', sans-serif; font-weight: 800; letter-spacing: -2px; font-size: 100px; line-height: 1; }
         .weather-pill {
             display: inline-flex; align-items: center; gap: 8px;
             background: var(--glass-bg); border: 1px solid var(--glass-border);
             padding: 6px 16px; border-radius: 30px; margin-top: 15px;
-            font-size: 14px; backdrop-filter: blur(10px); cursor: default;
+            font-size: 14px; backdrop-filter: blur(10px);
         }
 
-        /* 2. 搜索框 (修正：加高至 54px) */
+        /* 2. 搜索框 (Plus Max 版) */
         .search-box {
-            width: 90%; max-width: 500px; 
-            height: 54px; /* 加高 */
-            background: var(--glass-bg); border: 1px solid var(--glass-border);
-            border-radius: 27px; /* 圆角适配 */
+            width: 90%; max-width: 540px; 
+            /* 核心修改：高度由 54px 增加至 64px */
+            height: 64px; 
+            background: rgba(255, 255, 255, 0.15); /* 稍微加深底色，看起来更厚实 */
+            border: 1px solid var(--glass-border);
+            border-radius: 32px; /* 圆角适配 */
             display: flex; align-items: center; padding: 0 24px;
-            backdrop-filter: blur(20px); transition: 0.3s; margin-bottom: 40px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            backdrop-filter: blur(25px); transition: 0.3s; margin-bottom: 40px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.1);
         }
-        .search-box:focus-within { background: rgba(255,255,255,0.25); border-color: #fff; transform: scale(1.02); box-shadow: 0 8px 30px rgba(0,0,0,0.15); }
-        .search-input { width: 100%; background: transparent; border: none; outline: none; color: var(--text-main); font-size: 17px; text-align: center; height: 100%; }
+        .search-box:focus-within { 
+            background: rgba(255,255,255,0.25); border-color: #fff; 
+            transform: scale(1.02); box-shadow: 0 12px 40px rgba(0,0,0,0.2); 
+        }
+        .search-input { 
+            width: 100%; background: transparent; border: none; outline: none; 
+            color: var(--text-main); font-size: 18px; /* 字体加大 */
+            text-align: center; height: 100%; 
+        }
 
-        /* 3. 快捷方式 (修正：移除删除角标) */
+        /* 3. 快捷方式 */
         .apps-grid {
             display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
             gap: 16px; width: 100%; max-width: 960px; margin-bottom: 50px; padding: 0 20px;
@@ -89,8 +90,8 @@
         }
         .app-card:hover { background: rgba(255,255,255,0.25); transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
         .app-name { font-size: 14px; font-weight: 500; letter-spacing: 0.5px; }
-        
-        /* 4. 组件区 (修正：股票极简显示) */
+
+        /* 4. 组件区 */
         .widgets-area {
             display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 24px;
             width: 100%; max-width: 1200px; padding: 0 20px;
@@ -103,12 +104,11 @@
         }
         .widget-head { display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 12px; font-weight: 700; opacity: 0.8; letter-spacing: 1px; text-transform: uppercase; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px; }
         
-        /* 列表样式优化 */
         .list-item { padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.05); display: flex; gap: 10px; align-items: center; cursor: pointer; opacity: 0.9; font-size: 13px; transition: 0.2s; }
         .list-item:hover { opacity: 1; padding-left: 6px; background: rgba(255,255,255,0.05); border-radius: 4px; }
         .rank-num { color: #60a5fa; font-weight: bold; width: 18px; text-align: center; }
 
-        /* 极简股票列表样式 */
+        /* 极简股票列表 */
         .stock-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.08); }
         .stock-row:last-child { border: none; }
         .stock-name { font-size: 14px; font-weight: 600; color: #fff; }
@@ -118,7 +118,7 @@
         .up { color: #ff4d4f; background: rgba(255, 77, 79, 0.15); }
         .down { color: #34c759; background: rgba(52, 199, 89, 0.15); }
 
-        /* --- 5. Dock 栏 (修正：调矮至 42px，加长) --- */
+        /* 5. Dock 栏 (保持40px低高度) */
         .dock-container {
             position: fixed; bottom: 25px; left: 0; width: 100%;
             display: flex; justify-content: center; z-index: 50; pointer-events: none;
@@ -127,17 +127,17 @@
         .dock {
             pointer-events: auto;
             display: flex; align-items: center; justify-content: space-between;
-            height: 42px; /* 修正：高度调矮 */
-            padding: 0 60px; /* 修正：宽度拉长 */
+            height: 40px; /* 保持低矮精致 */
+            padding: 0 60px;
             gap: 30px; 
             background: var(--dock-bg); border: 1px solid var(--dock-border);
-            backdrop-filter: blur(40px); border-radius: 14px; /* 修正：圆角矩形 */
+            backdrop-filter: blur(40px); border-radius: 14px; 
             box-shadow: 0 15px 40px rgba(0,0,0,0.2);
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             min-width: 480px;
         }
         .dock-icon {
-            width: 24px; height: 24px; /* 图标更精致 */
+            width: 22px; height: 22px; 
             display: flex; align-items: center; justify-content: center;
             color: var(--text-main); opacity: 0.8; cursor: pointer; transition: 0.2s;
             position: relative;
@@ -147,16 +147,11 @@
         .dock-icon.active { opacity: 1; color: #fff; text-shadow: 0 0 10px rgba(255,255,255,0.8); }
         .dock-sep { width: 1px; height: 16px; background: rgba(255,255,255,0.3); }
 
-        /* 手机适配 */
         @media (max-width: 768px) {
             #clock { font-size: 60px; }
-            .main-container { padding-top: 5vh; }
+            .search-box { height: 48px; width: 85%; }
             .widgets-area { grid-template-columns: 1fr; gap: 15px; }
-            .dock { 
-                padding: 0 20px !important; gap: 20px !important; 
-                height: 44px !important; min-width: auto !important; width: 85% !important; 
-                bottom: 15px !important;
-            }
+            .dock { padding: 0 20px !important; gap: 20px !important; height: 44px !important; min-width: auto !important; width: 85% !important; bottom: 15px !important; }
             .dock-icon { width: 22px !important; height: 22px !important; }
             .settings-panel { width: 85%; }
         }
@@ -164,34 +159,20 @@
         .zen-hidden { opacity: 0; transform: translateY(20px); pointer-events: none; }
 
         /* 设置面板 */
-        .settings-overlay {
-            position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 99;
-            opacity: 0; pointer-events: none; transition: 0.3s;
-        }
+        .settings-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 99; opacity: 0; pointer-events: none; transition: 0.3s; }
         .settings-overlay.open { opacity: 1; pointer-events: auto; }
-        
-        .settings-panel {
-            position: fixed; top: 0; right: 0; width: 360px; height: 100%;
-            background: rgba(20, 20, 20, 0.95); backdrop-filter: blur(40px);
-            border-left: 1px solid rgba(255,255,255,0.1); padding: 24px;
-            transform: translateX(100%); transition: transform 0.3s ease; z-index: 100;
-            overflow-y: auto; color: white;
-        }
+        .settings-panel { position: fixed; top: 0; right: 0; width: 360px; height: 100%; background: rgba(20, 20, 20, 0.95); backdrop-filter: blur(40px); border-left: 1px solid rgba(255,255,255,0.1); padding: 24px; transform: translateX(100%); transition: transform 0.3s ease; z-index: 100; overflow-y: auto; color: white; }
         .settings-panel.open { transform: translateX(0); }
-        
-        .st-group { margin-bottom: 24px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 16px; }
+        .st-group { margin-bottom: 24px; }
         .st-header { font-size: 12px; font-weight: bold; opacity: 0.5; margin-bottom: 10px; text-transform: uppercase; }
-        .st-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; font-size: 14px; }
-        .st-input { width: 100%; background: rgba(255,255,255,0.1); border: none; padding: 10px; border-radius: 8px; color: white; outline: none; margin-bottom: 8px; font-size: 13px; }
-        .st-btn { width: 100%; background: #3b82f6; color: white; padding: 10px; border-radius: 8px; font-weight: bold; font-size: 13px; text-align: center; cursor: pointer; transition: 0.2s; }
-        .st-btn:hover { opacity: 0.9; }
+        .st-input { width: 100%; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); padding: 10px; border-radius: 8px; color: white; outline: none; margin-bottom: 8px; font-size: 13px; }
+        .st-btn { width: 100%; background: #3b82f6; color: white; padding: 10px; border-radius: 8px; font-weight: bold; font-size: 12px; text-align: center; cursor: pointer; }
         
         .switch { position: relative; width: 40px; height: 22px; background: rgba(255,255,255,0.2); border-radius: 20px; transition: 0.3s; cursor: pointer; }
         .switch::after { content:''; position: absolute; left: 2px; top: 2px; width: 18px; height: 18px; background: white; border-radius: 50%; transition: 0.3s; }
         .switch.on { background: #3b82f6; }
         .switch.on::after { transform: translateX(18px); }
         
-        /* 滚动条隐藏 */
         ::-webkit-scrollbar { display: none; }
     </style>
 </head>
@@ -232,9 +213,8 @@
             </div>
 
             <div id="wid-stock" class="widget">
-                <div class="widget-head"><span>市场行情</span><span class="opacity-50 text-[10px]">LIVE</span></div>
-                <div id="stockContainer" class="flex-1 overflow-y-auto">
-                    </div>
+                <div class="widget-head"><span>行情</span><span class="opacity-50 text-[10px]">LIVE</span></div>
+                <div id="stockContainer" class="flex-1 overflow-y-auto"></div>
             </div>
         </div>
     </div>
@@ -253,59 +233,18 @@
     <div id="mask" class="settings-overlay" onclick="toggleSet(false)"></div>
 
     <div id="settings" class="settings-panel">
-        <div class="flex justify-between items-center mb-6">
-            <h2 class="text-xl font-bold">设置</h2>
-            <button onclick="toggleSet(false)" class="opacity-50 text-xl">✕</button>
-        </div>
-
-        <div class="st-group">
-            <div class="st-header">外观</div>
-            <div class="st-row">
-                <span>暗黑模式 (Dark Mode)</span>
-                <div id="sw-dark" class="switch" onclick="toggleCfg('dark')"></div>
-            </div>
-        </div>
-
-        <div class="st-group">
-            <div class="st-header">数据源设置</div>
-            <div class="mb-2 text-xs opacity-50">新闻源接口</div>
-            <select id="newsSel" class="st-input" onchange="changeNews(this.value)">
-                <option value="baidu">百度热搜</option>
-                <option value="wb">微博热搜</option>
-                <option value="zhihu">知乎热榜</option>
-                <option value="36kr">36Kr</option>
-                <option value="sspai">少数派</option>
-            </select>
-        </div>
-
-        <div class="st-group">
-            <div class="st-header">组件开关</div>
-            <div class="st-row"><span>待办事项</span><div id="sw-todo" class="switch" onclick="toggleCfg('showTodo')"></div></div>
-            <div class="st-row"><span>新闻热榜</span><div id="sw-news" class="switch" onclick="toggleCfg('showNews')"></div></div>
-            <div class="st-row"><span>股票行情</span><div id="sw-stock" class="switch" onclick="toggleCfg('showStock')"></div></div>
-        </div>
-
-        <div class="st-group">
-            <div class="st-header">添加图标</div>
-            <input id="appName" class="st-input" placeholder="名称">
-            <input id="appUrl" class="st-input" placeholder="网址 (http://...)">
-            <button onclick="addApp()" class="st-btn">添加</button>
-        </div>
-
-        <div class="st-group" style="border:none">
-            <div class="grid grid-cols-2 gap-3">
-                <button onclick="exportData()" class="st-btn bg-green-600">备份配置</button>
-                <label class="st-btn bg-white/10 cursor-pointer">恢复配置 <input type="file" class="hidden" onchange="importData(this)"></label>
-            </div>
-        </div>
+        <div class="flex justify-between items-center mb-6"><h2 class="text-xl font-bold">设置</h2><button onclick="toggleSet(false)" class="opacity-50 text-xl">✕</button></div>
+        <div class="st-group"><div class="st-header">外观</div><div style="display:flex;justify-content:space-between;align-items:center"><span>暗黑模式</span><div id="sw-dark" class="switch" onclick="toggleCfg('dark')"></div></div></div>
+        <div class="st-group"><div class="st-header">新闻源</div><select id="newsSel" class="st-input" onchange="changeNews(this.value)"><option value="baidu">百度热搜</option><option value="wb">微博热搜</option><option value="zhihu">知乎热榜</option><option value="36kr">36Kr</option><option value="sspai">少数派</option></select></div>
+        <div class="st-group"><div class="st-header">组件开关</div><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><span>待办</span><div id="sw-todo" class="switch" onclick="toggleCfg('showTodo')"></div></div><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><span>新闻</span><div id="sw-news" class="switch" onclick="toggleCfg('showNews')"></div></div><div style="display:flex;justify-content:space-between;align-items:center"><span>股票</span><div id="sw-stock" class="switch" onclick="toggleCfg('showStock')"></div></div></div>
+        <div class="st-group"><div class="st-header">添加图标</div><input id="appName" class="st-input" placeholder="名称"><input id="appUrl" class="st-input" placeholder="网址"><button onclick="addApp()" class="st-btn">添加</button></div>
+        <div class="st-group" style="border:none"><div class="grid grid-cols-2 gap-3"><button onclick="exportData()" class="st-btn bg-green-600">备份</button><label class="st-btn bg-white/10 cursor-pointer">恢复 <input type="file" class="hidden" onchange="importData(this)"></label></div></div>
     </div>
 
     <script>
-        // 默认配置
         let cfg = {
             dark: false, showTodo: true, showNews: true, showStock: true,
             newsSrc: 'baidu',
-            // 静态股票数据 (模拟清爽效果，实际api需后端)
             stocks: [
                 {n: '上证指数', c: '000001', p: '3,050.12', r: '+0.52%'},
                 {n: '纳斯达克', c: 'NDX', p: '16,240.50', r: '+1.20%'},
@@ -321,62 +260,36 @@
         };
 
         function init() {
-            const s = localStorage.getItem('dash_ultimate_clean');
+            const s = localStorage.getItem('dash_clean_v2');
             if (s) cfg = { ...cfg, ...JSON.parse(s) };
-            
-            renderUI();
-            renderApps();
-            renderTodos();
-            renderStocks();
-            loadNews(cfg.newsSrc);
-            startClock();
-            
-            // 拖拽
+            renderUI(); renderApps(); renderTodos(); renderStocks(); loadNews(cfg.newsSrc); startClock();
             new Sortable(document.getElementById('shortcuts'), { animation: 150, onEnd: save });
-            
-            // 搜索
             document.getElementById('searchInput').addEventListener('keydown', e => {
-                if(e.key==='Enter' && e.target.value.trim()) {
-                    window.open(`https://www.baidu.com/s?wd=${encodeURIComponent(e.target.value)}`, '_blank');
-                    e.target.value='';
-                }
+                if(e.key==='Enter' && e.target.value.trim()) { window.open(`https://www.baidu.com/s?wd=${encodeURIComponent(e.target.value)}`, '_blank'); e.target.value=''; }
             });
         }
 
-        // 渲染 UI 状态
         function renderUI() {
             document.body.classList.toggle('dark', cfg.dark);
             document.getElementById('sw-dark').className = `switch ${cfg.dark?'on':''}`;
-            
             document.getElementById('wid-todo').style.display = cfg.showTodo ? 'flex' : 'none';
             document.getElementById('sw-todo').className = `switch ${cfg.showTodo?'on':''}`;
             document.getElementById('wid-news').style.display = cfg.showNews ? 'flex' : 'none';
             document.getElementById('sw-news').className = `switch ${cfg.showNews?'on':''}`;
             document.getElementById('wid-stock').style.display = cfg.showStock ? 'flex' : 'none';
             document.getElementById('sw-stock').className = `switch ${cfg.showStock?'on':''}`;
-            
-            // 手机端自动单列，PC端根据数量调整
             const count = (cfg.showTodo?1:0) + (cfg.showNews?1:0) + (cfg.showStock?1:0);
             const area = document.getElementById('widgets');
-            if(window.innerWidth > 768) {
-                area.style.gridTemplateColumns = `repeat(${count||1}, 1fr)`;
-                area.style.maxWidth = count===1 ? '500px' : (count===2 ? '900px' : '1200px');
-            }
-
+            if(window.innerWidth > 768) { area.style.gridTemplateColumns = `repeat(${count||1}, 1fr)`; area.style.maxWidth = count===1 ? '500px' : (count===2 ? '900px' : '1200px'); }
             document.getElementById('newsSel').value = cfg.newsSrc;
-            const map = {'baidu':'百度','wb':'微博','zhihu':'知乎','36kr':'36Kr','sspai':'少派'};
+            const map = {'baidu':'百度','wb':'微博','zhihu':'知乎','36kr':'36Kr','sspai':'少数派'};
             document.getElementById('newsSourceLabel').innerText = map[cfg.newsSrc];
         }
 
         function toggleCfg(k) { cfg[k] = !cfg[k]; save(); renderUI(); }
-        function save() { localStorage.setItem('dash_ultimate_clean', JSON.stringify(cfg)); }
+        function save() { localStorage.setItem('dash_clean_v2', JSON.stringify(cfg)); }
 
-        // 快捷方式 (无删除角标，右键删除)
-        function switchTab(t) {
-            cfg.tab = t;
-            document.querySelectorAll('.dock-icon').forEach(e => e.classList.remove('active'));
-            renderApps();
-        }
+        function switchTab(t) { cfg.tab = t; document.querySelectorAll('.dock-icon').forEach(e => e.classList.remove('active')); renderApps(); }
         function renderApps() {
             const list = cfg.apps[cfg.tab] || [];
             document.getElementById('shortcuts').innerHTML = list.map((a,i) => `
@@ -385,76 +298,34 @@
                 </div>
             `).join('');
         }
-        function addApp() {
-            const n = document.getElementById('appName').value;
-            const u = document.getElementById('appUrl').value;
-            if(n && u) { cfg.apps[cfg.tab].push({n,u}); save(); renderApps(); }
-        }
-        function delApp(e, i) {
-            e.preventDefault(); // 阻止默认右键菜单
-            if(confirm('确定删除此快捷方式吗？')) {
-                cfg.apps[cfg.tab].splice(i,1); save(); renderApps();
-            }
-        }
+        function addApp() { const n = document.getElementById('appName').value; const u = document.getElementById('appUrl').value; if(n && u) { cfg.apps[cfg.tab].push({n,u}); save(); renderApps(); } }
+        function delApp(e, i) { e.preventDefault(); if(confirm('确定删除此快捷方式吗？')) { cfg.apps[cfg.tab].splice(i,1); save(); renderApps(); } }
 
-        // 股票 (极简清爽版 - 模拟数据)
         function renderStocks() {
-            const container = document.getElementById('stockContainer');
-            // 注意：由于纯静态无后端，这里用模拟数据保持界面美观。
-            // 如需真实数据，需要后端代理解决CORS问题。
-            container.innerHTML = cfg.stocks.map(s => `
+            document.getElementById('stockContainer').innerHTML = cfg.stocks.map(s => `
                 <div class="stock-row">
-                    <div>
-                        <div class="stock-name">${s.n}</div>
-                        <div class="stock-sub">${s.c}</div>
-                    </div>
-                    <div style="text-align:right">
-                        <div class="stock-price">${s.p}</div>
-                        <div class="stock-change ${s.r.startsWith('+')?'up':'down'}">${s.r}</div>
-                    </div>
+                    <div><div class="stock-name">${s.n}</div><div class="stock-sub">${s.c}</div></div>
+                    <div style="text-align:right"><div class="stock-price">${s.p}</div><div class="stock-change ${s.r.startsWith('+')?'up':'down'}">${s.r}</div></div>
                 </div>
             `).join('');
         }
 
-        // 新闻 (增强防缓存 & 兜底数据)
         async function loadNews(src) {
             const list = document.getElementById('newsList');
             list.innerHTML = '<div class="text-center opacity-50 mt-4">加载中...</div>';
-            
-            // 兜底数据 (防止空白)
-            const fallbackData = [
-                {title: "新闻源连接失败，显示演示数据", url:"#"},
-                {title: "SpaceX星舰发射成功", url:"#"},
-                {title: "苹果发布会定档6月", url:"#"},
-                {title: "点击此处重试刷新", url:"javascript:loadNews('"+src+"')"}
-            ];
-
+            const fallbackData = [{title: "网络异常，显示本地演示数据", url:"#"},{title: "SpaceX星舰发射成功", url:"#"},{title: "GPT-5即将发布", url:"#"}];
             try {
-                // 使用时间戳防止缓存
                 const res = await fetch(`https://api.vvhan.com/api/hotlist?type=${src}&_t=${Date.now()}`);
                 const data = await res.json();
                 if(data.success && data.data) {
-                    list.innerHTML = data.data.slice(0,10).map((n,i)=>`
-                        <div class="list-item" onclick="window.open('${n.url}')">
-                            <span class="rank-num">${i+1}</span>
-                            <span class="truncate flex-1">${n.title}</span>
-                            <span class="text-[10px] opacity-40">${n.hot||''}</span>
-                        </div>
-                    `).join('');
+                    list.innerHTML = data.data.slice(0,10).map((n,i)=>`<div class="list-item" onclick="window.open('${n.url}')"><span class="rank-num">${i+1}</span><span class="truncate flex-1">${n.title}</span><span class="text-[10px] opacity-40">${n.hot||''}</span></div>`).join('');
                 } else throw new Error();
             } catch(e) {
-                // 自动加载兜底数据
-                list.innerHTML = fallbackData.map((n,i)=>`
-                    <div class="list-item opacity-60" onclick="${n.url.startsWith('java')?n.url:"window.open('"+n.url+"')"}" style="background:rgba(255,50,50,0.1)">
-                        <span class="rank-num text-red-400">!</span>
-                        <span class="truncate flex-1">${n.title}</span>
-                    </div>
-                `).join('');
+                list.innerHTML = fallbackData.map((n,i)=>`<div class="list-item opacity-60"><span class="rank-num text-red-400">!</span><span class="truncate flex-1">${n.title}</span></div>`).join('');
             }
         }
         function changeNews(v) { cfg.newsSrc = v; save(); renderUI(); loadNews(v); }
 
-        // 天气 & 时间
         function startClock() {
             const update = () => {
                 const n = new Date();
@@ -462,33 +333,17 @@
                 document.getElementById('dateStr').innerText = n.toLocaleDateString('zh-CN',{month:'short',day:'numeric',weekday:'short'});
             };
             setInterval(update, 1000); update();
-            
-            // 天气
-            fetch('https://wttr.in/?format=%c+%t')
-                .then(r=>r.text())
-                .then(t=>document.getElementById('weatherStr').innerText=t.trim())
-                .catch(()=>document.getElementById('weatherStr').innerText='天气不可用');
+            fetch('https://wttr.in/?format=%c+%t').then(r=>r.text()).then(t=>document.getElementById('weatherStr').innerText=t.trim()).catch(()=>{});
         }
 
-        // 待办事项
         function renderTodos() {
-            document.getElementById('todoList').innerHTML = cfg.todos.map((t,i) => `
-                <div class="list-item">
-                    <div class="w-3 h-3 border border-white/50 rounded cursor-pointer" onclick="toggleTodo(${i})">${t.done?'<div class="w-full h-full bg-white scale-75"></div>':''}</div>
-                    <span class="${t.done?'line-through opacity-30':''} flex-1 truncate text-xs">${t.text}</span>
-                    <span class="opacity-50 cursor-pointer" onclick="delTodo(${i})">✕</span>
-                </div>
-            `).join('');
+            document.getElementById('todoList').innerHTML = cfg.todos.map((t,i) => `<div class="list-item"><div class="w-3 h-3 border border-white/50 rounded cursor-pointer" onclick="toggleTodo(${i})">${t.done?'<div class="w-full h-full bg-white scale-75"></div>':''}</div><span class="${t.done?'line-through opacity-30':''} flex-1 truncate text-xs">${t.text}</span><span class="opacity-50 cursor-pointer" onclick="delTodo(${i})">✕</span></div>`).join('');
         }
         function addTodo(){ const v=document.getElementById('todoIn').value; if(v){cfg.todos.push({text:v,done:false});save();renderTodos();document.getElementById('todoIn').value='';} }
         function toggleTodo(i){ cfg.todos[i].done=!cfg.todos[i].done;save();renderTodos(); }
         function delTodo(i){ cfg.todos.splice(i,1);save();renderTodos(); }
 
-        // 通用控制
-        function toggleSet(s) { 
-            document.getElementById('settings').classList.toggle('open', s); 
-            document.getElementById('mask').classList.toggle('open', s);
-        }
+        function toggleSet(s) { document.getElementById('settings').classList.toggle('open', s); document.getElementById('mask').classList.toggle('open', s); }
         function toggleZen() {
             const dock = document.getElementById('dockWrap');
             const hidden = dock.style.transform === 'translateY(150%)';
@@ -496,7 +351,6 @@
             document.querySelector('.bg-layer').classList.toggle('zen', !hidden);
             document.querySelectorAll('#widgets, .search-box, #shortcuts, .clock-section').forEach(e => e.classList.toggle('zen-hidden', !hidden));
         }
-        
         function exportData() { const b=new Blob([JSON.stringify(cfg)],{type:"application/json"}); const a=document.createElement("a"); a.href=URL.createObjectURL(b); a.download="config.json"; a.click(); }
         function importData(inp) { const f=inp.files[0]; if(!f)return; const r=new FileReader(); r.onload=e=>{ try{cfg={...cfg,...JSON.parse(e.target.result)}; save(); location.reload(); }catch(e){} }; r.readAsText(f); }
 
